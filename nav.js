@@ -2,8 +2,10 @@
 // Each <body> should have data-page="pageid" to highlight the active link.
 
 const NAV = `
-<div class="sidebar-photo">
-  <img src="photo.jpg" alt="Aadithya Iyer" onerror="this.style.display='none'" />
+<div class="sidebar-ekko">
+  <img src="ekko.png" alt="Ekko" onerror="this.style.display='none'" />
+  <p class="ekko-quote">"It's not how much time you have,<br/>it's how you use it."</p>
+  <p class="ekko-attr">— Ekko, League of Legends</p>
 </div>
 <div class="sidebar-info">
   <h1 class="sidebar-name">Aadithya Iyer</h1>
