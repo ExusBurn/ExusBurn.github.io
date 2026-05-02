@@ -6,234 +6,188 @@
   <title>Aadithya Iyer</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body data-page="about">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
 
-  <div class="page-wrapper">
-
-    <!-- Left sidebar / nav -->
-    <aside class="sidebar">
-      <div class="sidebar-photo">
+    <!-- Intro -->
+    <div class="about-intro">
+      <div class="about-photo">
         <img src="photo.jpg" alt="Aadithya Iyer" onerror="this.style.display='none'" />
+        <p class="about-photo-caption">IISc, Bangalore · 2025–</p>
       </div>
-      <div class="sidebar-info">
-        <h1 class="sidebar-name">Aadithya Iyer</h1>
-        <p class="sidebar-title">Graduate Student</p>
-        <p class="sidebar-affil">Department of Computational and Data Sciences</p>
-        <p class="sidebar-affil">Indian Institute of Science, Bangalore</p>
+      <div class="about-text-main">
+        <h1>Aadithya Iyer</h1>
+        <span class="about-role">Graduate Student · IISc Bangalore</span>
+        <p>
+          I am a graduate student in the <a href="https://cds.iisc.ac.in/" target="_blank">Department of
+          Computational and Data Sciences (CDS)</a> at the <strong>Indian Institute of Science (IISc),
+          Bangalore</strong> — one of India's foremost research institutions and consistently ranked
+          among Asia's leading universities for science and engineering.
+        </p>
+        <p>
+          My work sits at the intersection of <strong>quantum computing</strong>,
+          <strong>high-performance numerical simulation</strong>, and <strong>machine learning</strong>.
+          I am deeply interested in building systems that push the boundary of what is computationally
+          feasible — whether that means writing hand-tuned CUDA kernels for GPU-accelerated quantum
+          simulation, designing quantum circuits for differential equations, or implementing modern
+          deep learning architectures from scratch.
+        </p>
       </div>
-      <div class="sidebar-contact">
-        <a href="mailto:aadithyaiyer@iisc.ac.in">aadithyaiyer@iisc.ac.in</a>
-        <a href="https://github.com/ExusBurn" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <hr />
+
+    <section id="about">
+      <h2>About Me</h2>
+      <p>
+        I grew up with a fascination for the question at the heart of computer science: <em>what can
+        be efficiently computed?</em> That question led me naturally toward its most radical frontier —
+        quantum computing — where the rules of what is "efficiently computable" are being rewritten.
+        But I have always believed that theory without implementation is incomplete, which is why my
+        work is equally grounded in high-performance systems programming, GPU architectures, and the
+        careful engineering required to make algorithms run fast on real hardware.
+      </p>
+      <p>
+        At IISc, I am part of the <a href="https://cds.iisc.ac.in/" target="_blank">Department of
+        Computational and Data Sciences</a>, a uniquely interdisciplinary department that bridges
+        mathematics, computer science, and domain-specific scientific computing. The curriculum is
+        designed to develop researchers who are equally comfortable with theoretical analysis and
+        systems-level implementation — an ethos that deeply resonates with how I approach problems.
+      </p>
+      <p>
+        My graduate coursework has spanned <strong>pattern recognition and neural networks</strong>
+        (covering the full arc from classical statistical learning to modern Transformers and generative
+        models), <strong>parallel programming</strong> (CUDA, MPI, OpenMP), <strong>numerical solutions
+        of differential equations</strong> (finite difference, finite element, and spectral methods),
+        and <strong>natural language processing</strong>. Each course has produced a substantial
+        project or set of assignments, all of which are documented and publicly available on GitHub.
+      </p>
+      <p>
+        Before IISc, I was involved in robotics research, working on a 7-Degrees of Freedom robotic
+        arm system that integrated computer vision, YOLOv3-based object detection, and Visual SLAM
+        for autonomous indoor navigation. That work led to a publication at the
+        <strong>9th International Conference on Computer Vision and Image Processing (CVIP 2024)</strong>,
+        co-authored with collaborators from IIST Thiruvananthapuram and BITS Goa.
+      </p>
+      <p>
+        Outside of research, I run a YouTube channel — <a href="https://www.youtube.com/@SuperEternalSunshine" target="_blank">Super Eternal Sunshine</a> —
+        and have also documented my GATE preparation journey for the benefit of future aspirants
+        hoping to enter IISc or other top research institutions in India.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="research">
+      <h2>Research Interests</h2>
+      <p>
+        My interests span several connected areas within computational science. What unites them is a
+        focus on algorithms that are both theoretically principled and practically performant.
+      </p>
+      <ul class="interest-list">
+        <li>
+          <strong>Quantum Algorithms &amp; Simulation —</strong>
+          I am interested in quantum algorithms that offer provable advantages over classical methods,
+          particularly for problems in linear algebra and differential equations. My work has touched
+          on the Linear Combination of Hamiltonian Simulation (LCHS) framework for solving linear
+          ODEs/PDEs, and Krylov subspace methods for quantum diagonalization. I work with both
+          Qiskit (IBM) and NVIDIA's CUDA-Q framework.
+        </li>
+        <li>
+          <strong>High-Performance &amp; GPU Computing —</strong>
+          I care deeply about the systems layer — writing CUDA kernels by hand, optimising memory
+          access patterns, and using MPI for distributed GPU computation. My KQD project
+          demonstrates what is possible when algorithms are co-designed with hardware: careful
+          statevector manipulation, fused gate operations, and shared-memory reductions yield
+          6.2× speedups over a high-level framework baseline.
+        </li>
+        <li>
+          <strong>Machine Learning &amp; Deep Learning —</strong>
+          From the mathematical foundations of SVMs and Gaussian mixture models to the architectural
+          innovations of Vision Transformers, GANs, and VAEs — I am interested in understanding
+          <em>why</em> these models work and building them from first principles. I have particular
+          interest in generative modelling and self-supervised learning.
+        </li>
+        <li>
+          <strong>Numerical Methods for PDEs —</strong>
+          Finite difference and finite element methods, Krylov solvers, spectral methods, and the
+          emerging area of quantum-accelerated numerical analysis. I am especially interested in
+          the question of where quantum algorithms genuinely help in solving PDEs and where they do not.
+        </li>
+        <li>
+          <strong>Robotics &amp; Perception —</strong>
+          Vision-guided robotic manipulation, SLAM, real-time object tracking, and sensor fusion.
+          My prior research demonstrated a complete pipeline from camera input to physical grasping,
+          validated at a 94% success rate in experimental settings.
+        </li>
+      </ul>
+    </section>
+
+    <hr />
+
+    <section id="projects">
+      <h2>Projects &amp; Work</h2>
+      <p>
+        The following projects represent the main bodies of work I have produced during and prior to
+        my time at IISc. Each has its own dedicated page with a full technical writeup.
+      </p>
+      <div class="project-cards">
+        <a href="kqd.html" class="proj-card">
+          <span class="proj-card-tag">Quantum · HPC</span>
+          <h3>Distributed Krylov Quantum Diagonalization</h3>
+          <p>GPU-accelerated quantum simulation with hand-written CUDA kernels and CUDA-aware MPI.
+          6.2× speedup over NVIDIA CUDA-Q at 23 qubits across 3 GPUs.</p>
+        </a>
+        <a href="lchs.html" class="proj-card">
+          <span class="proj-card-tag">Quantum · Numerics</span>
+          <h3>Quantum Solution of the 1D Heat Equation</h3>
+          <p>LCHS algorithm in Qiskit to solve the diffusion equation using quantum circuits.
+          Benchmarked against classical FTCS finite difference with spectral analysis.</p>
+        </a>
+        <a href="ml.html" class="proj-card">
+          <span class="proj-card-tag">Machine Learning</span>
+          <h3>Pattern Recognition &amp; Neural Networks</h3>
+          <p>Three assignments spanning classical ML from NumPy, deep learning in PyTorch
+          (Transformers, ViT), and generative models (GANs, VAEs, SimCLR).</p>
+        </a>
+        <a href="robotics.html" class="proj-card">
+          <span class="proj-card-tag">Robotics · Publication</span>
+          <h3>Visual SLAM &amp; Robotic Manipulation</h3>
+          <p>7-DOF arm with YOLOv3 detection, Visual SLAM, and contour-based 3D grasping.
+          94% success rate. Published at CVIP 2024.</p>
+        </a>
+        <a href="iisc-sem1.html" class="proj-card">
+          <span class="proj-card-tag">IISc Coursework</span>
+          <h3>First Semester — CDS</h3>
+          <p>Core graduate coursework from the first semester at the Department of
+          Computational and Data Sciences.</p>
+        </a>
+        <a href="iisc-sem2.html" class="proj-card">
+          <span class="proj-card-tag">IISc Coursework</span>
+          <h3>Second Semester — CDS</h3>
+          <p>PRNN, Parallel Programming, Numerical Differential Equations, NLP —
+          full repository of assignments and final projects.</p>
+        </a>
       </div>
-      <nav class="sidebar-nav">
-        <a href="#about">About</a>
-        <a href="#research">Research Interests</a>
-        <a href="#projects">Projects</a>
-        <a href="#coursework">Coursework</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </aside>
+    </section>
 
-    <!-- Main content -->
-    <main class="content">
+    <hr />
 
-      <!-- About -->
-      <section id="about">
-        <h2>About Me</h2>
-        <p>
-          I am a graduate student in the <a href="https://cds.iisc.ac.in/" target="_blank">Department of Computational
-          and Data Sciences (CDS)</a> at the <strong>Indian Institute of Science (IISc), Bangalore</strong>.
-          My work sits at the intersection of quantum computing, high-performance numerical simulation,
-          and machine learning — areas where theoretical rigour and computational performance must go hand in hand.
-        </p>
-        <p>
-          I am broadly passionate about developing algorithms that push the limits of what computers —
-          classical or quantum — can efficiently simulate and learn from. My current interests span
-          quantum algorithms for differential equations, GPU-accelerated quantum simulation, and
-          deep generative models.
-        </p>
-        <p>
-          Prior to IISc I worked on robotics research, building vision-guided manipulation systems
-          for robotic arms — from blind pick-and-place pipelines to camera-driven dynamic grasping
-          with autonomous vehicles.
-        </p>
-      </section>
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>
+        I welcome emails on research, collaboration, and opportunities. The best way to reach me is
+        at <a href="mailto:aadithyaiyer@iisc.ac.in">aadithyaiyer@iisc.ac.in</a>.
+        My code is publicly available on <a href="https://github.com/ExusBurn" target="_blank">GitHub (ExusBurn)</a>.
+      </p>
+    </section>
 
-      <hr />
-
-      <!-- Research Interests -->
-      <section id="research">
-        <h2>Research Interests</h2>
-        <ul class="interest-list">
-          <li>
-            <strong>Quantum Computing &amp; Simulation —</strong>
-            Quantum algorithms for linear differential equations (LCHS), Krylov subspace methods
-            for Hamiltonian diagonalization, and quantum circuit design on real hardware via Qiskit
-            and NVIDIA CUDA-Q.
-          </li>
-          <li>
-            <strong>High-Performance Computing —</strong>
-            GPU kernel development in CUDA, distributed computing with MPI, and shared-memory
-            parallelism via OpenMP. Interested in the co-design of algorithms and hardware for
-            scientific computing workloads.
-          </li>
-          <li>
-            <strong>Machine Learning &amp; Deep Learning —</strong>
-            From classical statistical learning (SVMs, GMMs, logistic regression) to modern
-            architectures — Transformers, Vision Transformers, GANs, VAEs, and self-supervised
-            contrastive learning. Particular interest in generative models and their theoretical foundations.
-          </li>
-          <li>
-            <strong>Numerical Methods —</strong>
-            Finite difference and finite element methods for PDEs, spectral methods,
-            and the emerging intersection of quantum algorithms with numerical analysis.
-          </li>
-          <li>
-            <strong>Robotics &amp; Perception —</strong>
-            Vision-guided manipulation, real-time object tracking, and sensor fusion
-            for autonomous robotic systems.
-          </li>
-        </ul>
-      </section>
-
-      <hr />
-
-      <!-- Projects -->
-      <section id="projects">
-        <h2>Projects</h2>
-
-        <div class="project">
-          <div class="project-title-row">
-            <h3>Distributed Krylov Quantum Diagonalization</h3>
-            <a href="https://github.com/ExusBurn/Distributed-Krylov-Quantum-Diagonalization" target="_blank" class="proj-link">[GitHub]</a>
-          </div>
-          <p class="proj-meta">Parallel Programming — Final Project &nbsp;·&nbsp; IISc CDS, 2026</p>
-          <p>
-            This project implements a fully distributed, GPU-accelerated Krylov Quantum Diagonalization
-            (KQD) algorithm for solving the time-independent Schrödinger equation on the Heisenberg XXX
-            spin chain. The implementation achieves a <strong>6.2× speedup</strong> over the NVIDIA CUDA-Q
-            baseline at 23 qubits, with near-ideal strong scaling across 3 GPUs using CUDA-aware MPI.
-          </p>
-          <p>
-            Key techniques include hand-written CUDA kernels for direct statevector manipulation,
-            fused two-qubit gate operations, shared-memory tree reductions, and statevector reuse
-            to avoid redundant memory transfers. An OpenMP/MPI CPU port is also provided for comparison.
-            The work benchmarks against NVIDIA's high-level CUDA-Q framework and demonstrates the
-            performance gains achievable through careful low-level GPU programming.
-          </p>
-          <p class="proj-tags">CUDA &nbsp;·&nbsp; C++ &nbsp;·&nbsp; MPI &nbsp;·&nbsp; OpenMP &nbsp;·&nbsp; NVIDIA CUDA-Q</p>
-        </div>
-
-        <div class="project">
-          <div class="project-title-row">
-            <h3>Quantum Solution of the 1D Heat Equation via LCHS</h3>
-            <a href="https://github.com/ExusBurn/SolvingLDE_QuantumComputing" target="_blank" class="proj-link">[GitHub]</a>
-          </div>
-          <p class="proj-meta">Numerical Solutions of Differential Equations — Final Project &nbsp;·&nbsp; IISc CDS, 2026</p>
-          <p>
-            An implementation of the <em>Linear Combination of Hamiltonian Simulation</em> (LCHS) algorithm
-            in Qiskit to solve the one-dimensional diffusion equation
-            ∂u/∂t = α(t) ∂²u/∂x² with periodic boundary conditions on [0, 2π].
-            The spatial domain is discretized into 16 grid points, and the time integral is approximated
-            using 64 Gauss–Legendre quadrature nodes, each corresponding to a controlled unitary
-            quantum circuit block.
-          </p>
-          <p>
-            The quantum solution is benchmarked against the classical Forward-Time Centered-Space (FTCS)
-            finite difference method. Results are presented via spatial profiles, amplitude decay curves,
-            and Fourier spectral analysis, providing a detailed picture of where quantum and classical
-            solutions agree and diverge.
-          </p>
-          <p class="proj-tags">Qiskit &nbsp;·&nbsp; Python &nbsp;·&nbsp; NumPy &nbsp;·&nbsp; SciPy &nbsp;·&nbsp; Quantum Algorithms</p>
-        </div>
-
-        <div class="project">
-          <div class="project-title-row">
-            <h3>Pattern Recognition and Neural Networks — Assignments</h3>
-            <a href="https://github.com/ExusBurn/PRNN_Assignments" target="_blank" class="proj-link">[GitHub]</a>
-          </div>
-          <p class="proj-meta">PRNN Course &nbsp;·&nbsp; IISc CDS, 2026</p>
-          <p>
-            A three-part deep-dive into the theory and practice of machine learning and neural networks.
-          </p>
-          <ul>
-            <li>
-              <strong>Assignment 1 — Classical ML from scratch:</strong> Ordinary least squares regression,
-              support vector machines, logistic regression, Gaussian mixture models, and Naïve Bayes —
-              all implemented directly in NumPy/SciPy without high-level ML libraries.
-              Includes a vectorised KNN implementation achieving a <strong>94× speedup</strong> over a naive loop.
-            </li>
-            <li>
-              <strong>Assignment 2 — Deep learning with PyTorch:</strong> MLPs, CNNs, RNNs, LSTMs, GRUs,
-              Transformers, and Vision Transformers on real-world datasets including Delhi air quality
-              time-series, PlantVillage crop disease imagery, and APTOS retinal fundus images.
-              Includes vanishing gradient demonstrations and FID score computation.
-            </li>
-            <li>
-              <strong>Assignment 3 — Generative models and RL:</strong> Ensemble methods (Random Forests,
-              Gradient Boosting), Generative Adversarial Networks, Variational Autoencoders,
-              SimCLR self-supervised contrastive learning, and the REINFORCE policy gradient algorithm.
-            </li>
-          </ul>
-          <p class="proj-tags">PyTorch &nbsp;·&nbsp; NumPy &nbsp;·&nbsp; Python &nbsp;·&nbsp; Transformers &nbsp;·&nbsp; GANs &nbsp;·&nbsp; VAEs &nbsp;·&nbsp; RL</p>
-        </div>
-
-        <div class="project">
-          <div class="project-title-row">
-            <h3>Robotic Arm Manipulation and Vision-Guided Grasping</h3>
-            <a href="https://github.com/ExusBurn/Codes" target="_blank" class="proj-link">[GitHub]</a>
-          </div>
-          <p class="proj-meta">Robotics Research</p>
-          <p>
-            Research-grade code developed for robotic arm control, covering a progression from
-            simple blind pick-and-place to fully vision-guided dynamic manipulation.
-            The system supports camera-driven object detection and real-time coordinate processing
-            for dynamic arm movement, multi-angle orientation detection for orientation-aware grasping,
-            and arm–autonomous vehicle coordination for retrieval and delivery tasks.
-          </p>
-          <p class="proj-tags">Python &nbsp;·&nbsp; Computer Vision &nbsp;·&nbsp; Robot Control</p>
-        </div>
-
-      </section>
-
-      <hr />
-
-      <!-- Coursework -->
-      <section id="coursework">
-        <h2>Coursework</h2>
-        <p>
-          The following repositories contain work from my graduate coursework at IISc CDS.
-          They are made public to serve as reference for other students.
-        </p>
-        <ul class="course-list">
-          <li>
-            <a href="https://github.com/ExusBurn/IIScSecondSem" target="_blank">IISc Second Semester (CDS)</a>
-            — Pattern Recognition and Neural Networks, Parallel Programming (GPU &amp; distributed),
-            Numerical Solutions of Differential Equations, Natural Language Processing.
-          </li>
-          <li>
-            <a href="https://github.com/ExusBurn/IIScFirstSem" target="_blank">IISc First Semester (CDS)</a>
-            — First semester coursework and course materials.
-          </li>
-        </ul>
-      </section>
-
-      <hr />
-
-      <!-- Contact -->
-      <section id="contact">
-        <h2>Contact</h2>
-        <p>
-          I can be reached at <a href="mailto:aadithyaiyer@iisc.ac.in">aadithyaiyer@iisc.ac.in</a>.
-          My code is on <a href="https://github.com/ExusBurn" target="_blank">GitHub (ExusBurn)</a>.
-        </p>
-      </section>
-
-    </main>
-  </div>
-
-  <script src="script.js"></script>
+  </main>
+</div>
+<script src="nav.js"></script>
 </body>
 </html>

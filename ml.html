@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Machine Learning &amp; Neural Networks · Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body data-page="ml">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">Machine Learning · Deep Learning · Course Assignments</span>
+      <h1>Pattern Recognition &amp; Neural Networks</h1>
+      <p class="hero-sub">PRNN Course &nbsp;·&nbsp; IISc CDS, 2026 &nbsp;·&nbsp;
+        <a href="https://github.com/ExusBurn/PRNN_Assignments" target="_blank" rel="noopener">GitHub Repository →</a>
+      </p>
+      <p>
+        Three assignments covering the complete arc of modern machine learning — from classical
+        statistical learning built from NumPy primitives, through deep learning architectures in
+        PyTorch, to generative models, self-supervised learning, and reinforcement learning.
+        All implementations are from scratch, emphasising theoretical understanding alongside
+        practical performance.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><span class="stat-num">94×</span><span class="stat-label">KNN speedup via vectorisation</span></div>
+      <div class="stat-box"><span class="stat-num">3</span><span class="stat-label">Real-world datasets</span></div>
+      <div class="stat-box"><span class="stat-num">ViT</span><span class="stat-label">Vision Transformers implemented</span></div>
+      <div class="stat-box"><span class="stat-num">FID</span><span class="stat-label">Fréchet Inception Distance computed</span></div>
+    </div>
+
+    <hr />
+
+    <section id="a1">
+      <h2>Assignment 1 — Classical Machine Learning from Scratch</h2>
+      <p>
+        The first assignment covers the foundational algorithms of statistical machine learning,
+        implemented entirely from NumPy and SciPy — no scikit-learn, no high-level ML libraries.
+        The goal is to understand these methods at the mathematical level and to appreciate the
+        computational challenges that motivated later developments.
+      </p>
+
+      <h3>Ordinary Least Squares Regression</h3>
+      <p>
+        OLS regression is derived and implemented in its closed-form solution (β = (XᵀX)⁻¹Xᵀy)
+        and compared against iterative gradient descent. The numerical issues of forming XᵀX
+        directly — condition number blow-up, catastrophic cancellation — motivate the use of QR
+        decomposition for a stable implementation.
+      </p>
+
+      <h3>Support Vector Machines</h3>
+      <p>
+        Both the primal and dual formulations of the SVM are derived. The dual is solved as a
+        quadratic program using SciPy's optimisation routines. The kernel trick is implemented
+        for RBF, polynomial, and linear kernels, and the KKT conditions are used to extract
+        support vectors explicitly. Decision boundaries are visualised in 2D for interpretability.
+      </p>
+
+      <h3>Logistic Regression</h3>
+      <p>
+        Binary and multi-class logistic regression via one-vs-rest and softmax formulations.
+        Gradient descent and Newton's method are compared. The probabilistic interpretation
+        (logistic regression as a conditional likelihood model) is emphasised alongside the
+        discriminative boundary view.
+      </p>
+
+      <h3>Gaussian Mixture Models &amp; EM</h3>
+      <p>
+        GMMs are fitted via the Expectation-Maximisation algorithm, derived step by step from
+        the evidence lower bound (ELBO). The assignment explores the effect of the number of
+        components, covariance structure (spherical, diagonal, full), and initialisation
+        sensitivity. The connection between EM and coordinate ascent in variational inference
+        is made explicit.
+      </p>
+
+      <h3>Naïve Bayes</h3>
+      <p>
+        Gaussian Naïve Bayes and Bernoulli Naïve Bayes are implemented from likelihood principles.
+        The conditional independence assumption is tested empirically, and the effect of Laplace
+        smoothing on categorical features is studied.
+      </p>
+
+      <h3>Vectorised KNN: 94× Speedup</h3>
+      <p>
+        K-Nearest Neighbours is a deceptively simple algorithm whose naïve implementation is
+        catastrophically slow for large datasets due to its O(n²d) pairwise distance computation.
+        The assignment implements a fully vectorised version using NumPy broadcasting that computes
+        all pairwise distances in a single matrix operation:
+      </p>
+      <div class="callout">
+        <p>
+          ‖xᵢ − xⱼ‖² = ‖xᵢ‖² − 2xᵢ·xⱼ + ‖xⱼ‖²
+        </p>
+        <p>
+          This can be computed for all (i,j) pairs simultaneously using outer products and
+          batch matrix multiplications — operations that are heavily optimised in NumPy's
+          BLAS backend. The result is a <strong>94× speedup</strong> over a naive Python loop
+          implementation on the benchmark dataset.
+        </p>
+      </div>
+
+      <div class="tech-tags">
+        <span>NumPy</span><span>SciPy</span><span>Python</span><span>Matplotlib</span>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="a2">
+      <h2>Assignment 2 — Deep Learning with PyTorch</h2>
+      <p>
+        The second assignment moves into modern deep learning, implementing a suite of architectures
+        in PyTorch and applying them to three distinct real-world datasets, each with different
+        input modalities and prediction challenges.
+      </p>
+
+      <h4>Datasets</h4>
+      <ul class="prose-list">
+        <li>
+          <strong>Delhi Air Quality Time Series:</strong> Multivariate time-series data of air
+          pollutant concentrations in Delhi, used for sequence modelling and forecasting tasks.
+        </li>
+        <li>
+          <strong>PlantVillage Crop Disease:</strong> A large image dataset of plant leaves
+          labelled with 38 disease classes, used for image classification. Models must generalise
+          across crop species and disease severity.
+        </li>
+        <li>
+          <strong>APTOS Retinal Fundus Images:</strong> Medical imaging dataset of retinal
+          photographs graded for diabetic retinopathy severity (0–4 scale). Poses a fine-grained
+          ordinal regression challenge.
+        </li>
+      </ul>
+
+      <h3>Multilayer Perceptrons</h3>
+      <p>
+        The assignment begins with fully-connected feedforward networks, studying the effect of
+        depth, width, activation functions, and regularisation (L2, dropout, batch normalisation)
+        on generalisation. Vanishing gradients are explicitly demonstrated — training curves and
+        gradient norm histories for very deep MLPs without normalisation show how signal fails
+        to propagate to early layers.
+      </p>
+
+      <h3>Convolutional Neural Networks</h3>
+      <p>
+        CNNs are applied to the image datasets. Architectures are designed from scratch rather
+        than using pretrained models. The assignment studies the effect of receptive field size,
+        pooling strategies, and skip connections (ResNet-style) on classification accuracy.
+        Grad-CAM visualisations are used to inspect which image regions activate each filter.
+      </p>
+
+      <h3>Recurrent Networks: RNNs, LSTMs, GRUs</h3>
+      <p>
+        Recurrent architectures are applied to the Delhi air quality time series. Vanilla RNNs
+        are shown to fail on long sequences due to vanishing gradients — an empirical demonstration
+        of the issue that motivated LSTMs. LSTM and GRU are then implemented and compared, with
+        attention to the gating mechanisms that allow them to selectively retain information across
+        long temporal horizons.
+      </p>
+
+      <h3>Transformers &amp; Vision Transformers</h3>
+      <p>
+        The Transformer architecture (Vaswani et al., 2017) is implemented from scratch: multi-head
+        self-attention, positional encoding, feedforward sublayers, and layer normalisation.
+        The attention mechanism is then adapted to images via the Vision Transformer (ViT) —
+        the image is patchified into a sequence of tokens, and a standard Transformer encoder
+        processes the resulting sequence.
+      </p>
+      <p>
+        The assignment includes a study of how attention patterns in ViT differ from those in NLP
+        Transformers — early layers attend locally (similar to CNNs) while deeper layers develop
+        global attention patterns that span the entire image.
+      </p>
+
+      <h4>Key result: FID Score Computation</h4>
+      <p>
+        The Fréchet Inception Distance (FID) is implemented and used to evaluate generative
+        quality — even in the discriminative setting, FID between real and augmented data provides
+        a useful diagnostic. Understanding FID requires working with the statistics of deep feature
+        spaces and computing the Fréchet distance between two Gaussian distributions.
+      </p>
+
+      <div class="tech-tags">
+        <span>PyTorch</span><span>Python</span><span>NumPy</span><span>Transformers</span>
+        <span>Vision Transformers</span><span>LSTM</span><span>CNN</span>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="a3">
+      <h2>Assignment 3 — Generative Models &amp; Reinforcement Learning</h2>
+      <p>
+        The third assignment covers the frontier of modern ML: ensemble methods, generative modelling,
+        self-supervised learning, and policy gradient reinforcement learning.
+      </p>
+
+      <h3>Ensemble Methods: Random Forests &amp; Gradient Boosting</h3>
+      <p>
+        Random Forests are implemented using bagging over decision tree base learners, with
+        feature subsampling at each split for decorrelation. Gradient Boosted Trees (GBT) are
+        derived from the functional gradient descent perspective — each tree is fit to the
+        residuals of the current ensemble. The assignment compares the two approaches on the
+        same datasets, examining bias-variance tradeoffs and calibration.
+      </p>
+
+      <h3>Generative Adversarial Networks</h3>
+      <p>
+        GANs are implemented in PyTorch with both a standard DCGAN architecture and a
+        conditional variant. Training instability is a central theme: mode collapse, the
+        vanishing gradient problem in the discriminator, and the importance of careful
+        learning rate scheduling are all studied empirically. The Wasserstein GAN (WGAN)
+        is implemented as a more stable alternative, with gradient penalty (WGAN-GP) as
+        the constraint mechanism.
+      </p>
+
+      <h3>Variational Autoencoders</h3>
+      <p>
+        VAEs are derived from first principles via the Evidence Lower Bound (ELBO). The
+        reparameterisation trick — the critical innovation that allows gradients to flow
+        through a stochastic sampling step — is implemented and its role in making the
+        latent space continuous and interpolatable is demonstrated. The assignment includes
+        latent space visualisations showing how the model organises different classes.
+      </p>
+
+      <h3>SimCLR — Self-Supervised Contrastive Learning</h3>
+      <p>
+        SimCLR (Chen et al., 2020) is implemented from scratch: two views of each image are
+        created via random augmentation (crop, colour jitter, blur), and a contrastive loss
+        (NT-Xent) is minimised to attract representations of the same image and repel those
+        of different images. The resulting encoder, trained with no labels, achieves competitive
+        accuracy when a linear classifier is added on top. This demonstrates that self-supervised
+        learning can extract rich semantic representations from unlabelled data.
+      </p>
+
+      <h3>REINFORCE — Policy Gradient RL</h3>
+      <p>
+        The REINFORCE algorithm (Williams, 1992) is implemented and applied to a standard control
+        environment. The core challenge of policy gradient methods — high variance in the gradient
+        estimate — is addressed via a baseline subtraction (advantage function). The assignment
+        includes learning curves, episode reward distributions, and analysis of how baseline
+        choice affects sample efficiency.
+      </p>
+
+      <div class="tech-tags">
+        <span>PyTorch</span><span>GANs</span><span>VAEs</span><span>SimCLR</span>
+        <span>REINFORCE</span><span>Self-Supervised Learning</span><span>Ensemble Methods</span>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="links">
+      <h2>Repository</h2>
+      <p>
+        All three assignments — notebooks, model implementations, training scripts, and analysis —
+        are available on GitHub.
+      </p>
+      <p>
+        <a href="https://github.com/ExusBurn/PRNN_Assignments" target="_blank" rel="noopener">
+          → GitHub: PRNN_Assignments
+        </a>
+      </p>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>

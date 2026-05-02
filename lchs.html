@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Heat Equation (LCHS) · Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body data-page="lchs">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">Quantum Algorithms · Numerical Methods · Final Project</span>
+      <h1>Quantum Solution of the 1D Heat Equation via LCHS</h1>
+      <p class="hero-sub">Numerical Solutions of Differential Equations Course &nbsp;·&nbsp; IISc CDS, 2026 &nbsp;·&nbsp;
+        <a href="https://github.com/ExusBurn/SolvingLDE_QuantumComputing" target="_blank" rel="noopener">GitHub Repository →</a>
+      </p>
+      <p>
+        An implementation of the <em>Linear Combination of Hamiltonian Simulation</em> (LCHS) algorithm
+        in Qiskit, applied to solving the 1D diffusion equation on a quantum computer. The quantum
+        solution is rigorously benchmarked against the classical Forward-Time Centered-Space (FTCS)
+        finite difference method, with analysis in both physical and spectral domains.
+      </p>
+    </div>
+
+    <hr />
+
+    <section id="problem">
+      <h2>The Problem: 1D Diffusion Equation</h2>
+      <p>
+        The one-dimensional diffusion (heat) equation is one of the most fundamental PDEs in
+        mathematical physics, describing how heat, concentration, or any diffusing quantity spreads
+        over time. We study the problem:
+      </p>
+      <div class="callout">
+        <p><strong>∂u/∂t = α(t) · ∂²u/∂x²</strong></p>
+        <p>
+          on the domain x ∈ [0, 2π] with periodic boundary conditions u(0, t) = u(2π, t),
+          and a time-dependent diffusion coefficient α(t). The initial condition is a smooth
+          function on the periodic domain.
+        </p>
+      </div>
+      <p>
+        Despite its apparent simplicity, this equation is a canonical test case for quantum algorithms
+        for linear differential equations. It has a known analytical solution via Fourier series,
+        which allows for rigorous error quantification. The time-dependent coefficient α(t) makes
+        the problem non-trivial — the system is not time-homogeneous, so simple matrix exponentiation
+        does not apply directly.
+      </p>
+      <p>
+        <strong>Why study this on a quantum computer?</strong> Quantum algorithms for linear systems
+        of equations (HHL and its successors) promise exponential speedups in certain regimes.
+        Quantum algorithms for differential equations, including LCHS, are an active research area
+        exploring whether similar advantages extend to time-evolution problems.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="lchs">
+      <h2>The LCHS Algorithm</h2>
+      <p>
+        The <strong>Linear Combination of Hamiltonian Simulation</strong> (LCHS) algorithm, developed
+        by An, Liu, and Lin (2023), provides a way to solve linear ODEs of the form
+        du/dt = A(t)u using a quantum computer, where A(t) is a time-dependent matrix.
+      </p>
+
+      <h3>Core Idea</h3>
+      <p>
+        The key insight is that the solution operator U(t) = exp(∫₀ᵗ A(s) ds) can be approximated
+        as a <em>linear combination of unitary operators</em> — specifically, as a weighted integral
+        of Hamiltonian simulation operators:
+      </p>
+      <div class="callout">
+        <p>
+          <strong>U(T) ≈ ∫ k(t) · e^{iHt} dt</strong>
+        </p>
+        <p>
+          where k(t) is a kernel function and H is a Hermitian matrix related to A.
+          The integral is discretised using numerical quadrature, turning it into a
+          finite sum of unitaries that can be implemented as a quantum circuit.
+        </p>
+      </div>
+      <p>
+        This formulation is powerful because quantum computers can implement Hamiltonian simulation
+        e^{iHt} efficiently — it is one of the tasks for which quantum computers have a known
+        advantage. The LCHS method thus converts a linear ODE into a sequence of Hamiltonian
+        simulation problems.
+      </p>
+
+      <h3>Spatial Discretisation</h3>
+      <p>
+        The spatial domain [0, 2π] is discretised into <strong>N = 16 grid points</strong>,
+        converting the PDE into a system of ODEs. With periodic boundary conditions, the discrete
+        Laplacian (∂²/∂x²) becomes a circulant matrix, which is efficiently represented and
+        diagonalised via the Discrete Fourier Transform.
+      </p>
+      <p>
+        Choosing N = 16 = 2⁴ means the discretised state vector has exactly 16 components,
+        requiring <strong>4 qubits</strong> to represent. This makes the circuit size manageable
+        for simulation while still capturing the essential physics.
+      </p>
+
+      <h3>Gauss–Legendre Quadrature</h3>
+      <p>
+        The time integral in the LCHS formula is approximated using
+        <strong>64 Gauss–Legendre quadrature nodes</strong> on [0, T]. Each node tⱼ corresponds
+        to a Hamiltonian simulation circuit e^{iH·tⱼ}, implemented as a controlled unitary block
+        in the full quantum circuit. The quadrature weights wⱼ serve as the linear combination
+        coefficients.
+      </p>
+      <p>
+        Gauss–Legendre quadrature achieves optimal convergence for smooth integrands — using
+        64 nodes provides high accuracy while keeping the circuit complexity tractable. The choice
+        of quadrature rule directly determines the approximation error of the algorithm.
+      </p>
+
+      <h3>Quantum Circuit Structure</h3>
+      <p>
+        The full quantum circuit implementing LCHS consists of:
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>State preparation (state prep block):</strong> The 4 system qubits (system₀–system₃)
+          are initialised to u₀/‖u₀‖, encoding the initial condition as a quantum amplitude vector.
+        </li>
+        <li>
+          <strong>V PREPARE:</strong> The 6 ancilla qubits are loaded with the Gauss–Legendre quadrature
+          weights, preparing a superposition over the 64 quadrature nodes.
+        </li>
+        <li>
+          <strong>SELECT (controlled unitaries):</strong> For each quadrature node index j, a
+          controlled unitary SEL Σⱼ |j⟩⟨j| ⊗ Ûⱼ applies the corresponding Hamiltonian simulation
+          block e^{iH·tⱼ} to the system register, conditioned on the ancilla.
+        </li>
+        <li>
+          <strong>V PREPARE† (UNPREP):</strong> The ancilla is uncomputed, projecting the system
+          register onto the desired linear combination. Measurement yields amplitudes proportional
+          to the solution u(x, T).
+        </li>
+      </ul>
+
+      <div style="margin: 1.75rem 0; text-align:center;">
+        <img src="lchs_lcu.png" alt="LCHS quantum circuit — LCU framework in Qiskit" style="width:100%; max-width:780px; border-radius:8px; box-shadow:0 2px 16px rgba(0,0,0,0.15);" />
+        <p style="font-size:0.78rem; color:#888; margin-top:0.6rem;">
+          Full Qiskit circuit: 4 system qubits + 6 ancilla qubits implementing the LCU-based LCHS
+          algorithm. Left to right: state prep → V PREPARE → SELECT → UNPREP.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="classical">
+      <h2>Classical Baseline: FTCS</h2>
+      <p>
+        The quantum result is benchmarked against the <strong>Forward-Time Centered-Space (FTCS)</strong>
+        finite difference method — the most straightforward explicit time-stepping scheme for the
+        heat equation.
+      </p>
+      <p>
+        FTCS discretises both time and space and advances the solution one step at a time:
+      </p>
+      <div class="callout">
+        <p><strong>uᵢⁿ⁺¹ = uᵢⁿ + α·Δt/Δx² · (uᵢ₊₁ⁿ − 2uᵢⁿ + uᵢ₋₁ⁿ)</strong></p>
+        <p>Stability requires the CFL condition α·Δt/Δx² ≤ ½. With N=16 and the chosen parameters,
+        this is easily satisfied.</p>
+      </div>
+      <p>
+        FTCS is used as both a correctness check (the quantum and classical solutions should agree)
+        and a baseline for understanding where the quantum solution deviates or accumulates error.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="results">
+      <h2>Results &amp; Analysis</h2>
+      <p>
+        The results are presented across three complementary visualisations, each probing a
+        different aspect of the quantum solution's accuracy.
+      </p>
+
+      <h3>Spatial Profiles</h3>
+      <p>
+        Snapshots of u(x, t) at several time points compare the quantum (LCHS), classical (FTCS),
+        and analytical solutions on the same plot. For small to moderate times, the quantum solution
+        tracks the classical solution closely. At larger times the diffusion drives the solution
+        toward a uniform distribution, and both methods converge to the same equilibrium.
+      </p>
+
+      <h3>Amplitude Decay Curves</h3>
+      <p>
+        The L2 norm ‖u(·, t)‖₂ decays exponentially with time due to diffusion. Plotting this
+        for all three methods reveals how well the quantum algorithm captures the global energy
+        dissipation. Any systematic error in the LCHS approximation — from quadrature truncation
+        or circuit depth limits — appears as a deviation in the decay rate.
+      </p>
+
+      <h3>Fourier Spectral Analysis</h3>
+      <p>
+        Taking the Discrete Fourier Transform of u(x, t) decomposes the solution into modes.
+        For the heat equation, each Fourier mode decays independently as
+        û_k(t) = û_k(0) · exp(−k² · ∫₀ᵗ α(s) ds).
+        Comparing the modal amplitudes from LCHS and FTCS against this analytical formula gives
+        a precise, mode-by-mode error budget — revealing which spatial frequencies are captured
+        accurately and where the quantum approximation struggles.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Finding:</strong> The LCHS algorithm accurately reproduces the classical solution
+          for low-frequency modes (long-wavelength behaviour). High-frequency modes, which decay
+          fastest and are most sensitive to approximation errors in the time integration,
+          show somewhat larger relative errors — consistent with the expected behaviour of
+          a quadrature-based approximation.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="links">
+      <h2>Code &amp; Repository</h2>
+      <p>
+        The full implementation — Qiskit circuits, FTCS solver, quadrature setup, and analysis
+        notebooks — is available on GitHub.
+      </p>
+      <p>
+        <a href="https://github.com/ExusBurn/SolvingLDE_QuantumComputing" target="_blank" rel="noopener">
+          → GitHub: SolvingLDE_QuantumComputing
+        </a>
+      </p>
+      <div class="tech-tags">
+        <span>Qiskit</span><span>Python</span><span>NumPy</span>
+        <span>SciPy</span><span>Matplotlib</span><span>Quantum Circuits</span>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>

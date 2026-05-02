@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IISc First Semester · Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body data-page="sem1">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">IISc CDS · Graduate Coursework</span>
+      <h1>First Semester at IISc CDS</h1>
+      <p class="hero-sub">Department of Computational and Data Sciences &nbsp;·&nbsp; 2025 &nbsp;·&nbsp;
+        <a href="https://github.com/ExusBurn/IIScFirstSem" target="_blank" rel="noopener">GitHub Repository →</a>
+      </p>
+      <p>
+        The first semester at IISc CDS is designed to establish a rigorous mathematical and
+        computational foundation. Courses span linear algebra, probability, algorithms, and
+        the theory of computation — building the common language that underpins everything
+        from machine learning to quantum computing.
+      </p>
+    </div>
+
+    <hr />
+
+    <section id="context">
+      <h2>Context: What IISc CDS Is</h2>
+      <p>
+        The Department of Computational and Data Sciences at IISc is unlike most computer science
+        or mathematics departments. It is explicitly interdisciplinary — its faculty work on
+        scientific computing, machine learning theory, visualisation, computational biology, and
+        quantum information, often in the same group. The curriculum reflects this: it demands
+        both mathematical rigour and the ability to implement and experiment.
+      </p>
+      <p>
+        Getting into CDS requires clearing the GATE examination at a high level, followed by a
+        written test and interview. The programme is designed for students who want to do research,
+        not just apply techniques. The first semester sets the intellectual standard that the rest
+        of the programme builds on.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="courses">
+      <h2>Courses</h2>
+      <p>
+        The first semester at IISc CDS comprises five core courses, each taught at a level that
+        assumes strong undergraduate preparation in mathematics and computing. Together they
+        establish the theoretical and computational vocabulary for everything that follows.
+      </p>
+
+      <h3>Numerical Linear Algebra (NLA)</h3>
+      <p>
+        NLA is the backbone of scientific computing. The course begins with the fundamentals —
+        floating-point arithmetic, conditioning, stability, and the cost of basic operations —
+        before moving to the major matrix factorisation techniques.
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>QR Factorisation:</strong> Gram–Schmidt and Householder reflections. QR is
+          the workhorse of stable least squares and the foundation of eigenvalue algorithms.
+          The classical Gram–Schmidt instability and the superiority of modified Gram–Schmidt
+          and Householder variants are studied in numerical detail.
+        </li>
+        <li>
+          <strong>SVD (Singular Value Decomposition):</strong> The fundamental decomposition
+          of numerical linear algebra. Derivation, geometric interpretation, and applications:
+          low-rank approximation, pseudoinverses, PCA, and condition number analysis. The SVD
+          explains the geometry of least squares and why some systems are inherently hard to solve.
+        </li>
+        <li>
+          <strong>Power Iterations &amp; Eigenvalue Methods:</strong> The power method, inverse
+          iteration, Rayleigh quotient iteration, and the QR algorithm for full eigendecomposition.
+          Convergence rates, deflation, and the shift-and-invert trick for targeting specific
+          parts of the spectrum.
+        </li>
+        <li>
+          <strong>Krylov Subspace Methods:</strong> Lanczos iteration for symmetric matrices,
+          Arnoldi for non-symmetric, and GMRES for linear systems. The connection between
+          Krylov methods and polynomial approximation theory — why these methods converge fast
+          on matrices with clustered spectra. This material directly underpins the KQD project
+          in the second semester.
+        </li>
+      </ul>
+
+      <h3>Stochastic Models and Applications (StoMa)</h3>
+      <p>
+        A rigorous treatment of probability theory and stochastic processes, beginning from
+        the measure-theoretic foundations and building toward modern applications in simulation
+        and analysis.
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Measure-theoretic probability:</strong> Probability spaces, σ-algebras, the
+          Borel σ-algebra on ℝ, measurable functions, Lebesgue integration. This is the formal
+          foundation on which all of probability theory rests — understanding why the Borel
+          σ-algebra is the right structure for real-valued random variables.
+        </li>
+        <li>
+          <strong>Markov Chains:</strong> Discrete-time and continuous-time Markov chains,
+          transition matrices, stationary distributions, ergodicity, and mixing times. The
+          Perron–Frobenius theorem and its implications for convergence. Applications to
+          Monte Carlo methods and queueing theory.
+        </li>
+        <li>
+          <strong>Stochastic Processes:</strong> Autocorrelation and autocovariance functions,
+          wide-sense stationarity, power spectral density, and the Wiener–Khinchin theorem.
+          Poisson processes, Brownian motion, and Gaussian processes as the continuous-time
+          limit of random walks.
+        </li>
+      </ul>
+
+      <h3>Numerical Methods (NM)</h3>
+      <p>
+        A focused course on the practical numerical methods that appear throughout scientific
+        computing, with emphasis on implementation and error analysis.
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Newton's Method:</strong> Root finding in one and multiple dimensions.
+          Convergence analysis — quadratic convergence near a simple root, linear convergence
+          at repeated roots. Variants: secant method, Broyden's method for systems.
+        </li>
+        <li>
+          <strong>Numerical Differentiation:</strong> Finite difference approximations to
+          derivatives (forward, backward, central). Truncation error and the tradeoff between
+          step size and floating-point cancellation. Richardson extrapolation for improved accuracy.
+        </li>
+        <li>
+          <strong>Numerical Integration:</strong> Newton–Cotes rules (trapezoidal, Simpson),
+          Gaussian quadrature (Gauss–Legendre, Gauss–Hermite), and adaptive integration.
+          Error bounds and convergence for smooth vs. non-smooth integrands.
+          This directly connects to the Gauss–Legendre nodes used in the LCHS project.
+        </li>
+      </ul>
+
+      <h3>Introduction to Data Science (IDS)</h3>
+      <p>
+        A rigorous course bridging statistics and machine learning, with substantial overlap
+        with StoMa in probabilistic foundations but going further into the data analysis direction.
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Autocorrelation &amp; Autocovariance (in depth):</strong> More rigorous treatment
+          than StoMa — sample estimators, bias, and the effect of finite data. Spectral estimation
+          via periodograms and Welch's method. Hypothesis testing for stationarity.
+        </li>
+        <li>
+          <strong>Statistical Estimation:</strong> MLE, MAP, Bayesian inference, confidence
+          intervals, and hypothesis testing. The Cramér–Rao bound as the fundamental limit on
+          estimator variance.
+        </li>
+        <li>
+          <strong>Machine Learning:</strong> Linear regression, regularisation (ridge, lasso),
+          classification (logistic regression, SVMs), dimensionality reduction (PCA), and
+          model selection (cross-validation, information criteria). Emphasis on the probabilistic
+          interpretation of each method.
+        </li>
+      </ul>
+
+      <h3>Introduction to Scalable Systems</h3>
+      <p>
+        A course on the systems foundations required for large-scale computing — understanding
+        how modern hardware actually works and how to design software that exploits it.
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Memory hierarchies:</strong> Cache behaviour, locality of reference, TLB,
+          and the performance impact of memory access patterns. Why an algorithm's memory
+          access pattern can matter as much as its asymptotic complexity.
+        </li>
+        <li>
+          <strong>Parallelism fundamentals:</strong> Threading models, race conditions,
+          synchronisation primitives, and Amdahl's law. Introduction to GPU architectures
+          as a motivating example of massively parallel hardware — setting the stage for the
+          second-semester Parallel Programming course.
+        </li>
+        <li>
+          <strong>Distributed computing basics:</strong> MapReduce, consistency models,
+          and the CAP theorem. How to reason about correctness and performance in systems
+          where state is spread across multiple machines.
+        </li>
+      </ul>
+    </section>
+
+    <hr />
+
+    <section id="reflection">
+      <h2>Reflection</h2>
+      <p>
+        The first semester is demanding by design. The workload is high and the material moves
+        quickly — it assumes strong undergraduate preparation and rewards those who engage deeply
+        rather than trying to memorise. What it provides in return is a set of mental tools that
+        make every subsequent course easier to understand at a fundamental level.
+      </p>
+      <p>
+        What the five courses share is a common emphasis on rigour, derivation, and depth over
+        breadth. NLA builds the machinery that makes the Krylov methods in KQD possible. StoMa
+        provides the formal foundations for everything probabilistic in ML. Numerical Methods
+        gives you the quadrature theory that appears directly in the LCHS project. The courses
+        are not isolated — they form a tightly connected intellectual foundation.
+      </p>
+      <p>
+        For anyone preparing to enter IISc CDS: the first semester will be the most significant
+        adjustment you experience. The transition from undergraduate to graduate-level rigour is
+        real. See the <a href="gate.html">GATE preparation page</a> for more on how to get here
+        and what to expect.
+      </p>
+      <p>
+        <a href="https://github.com/ExusBurn/IIScFirstSem" target="_blank" rel="noopener">
+          → GitHub: IIScFirstSem
+        </a>
+      </p>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>

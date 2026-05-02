@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robotics &amp; CVIP 2024 · Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body data-page="robotics">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">Robotics · Computer Vision · CVIP 2024 Publication</span>
+      <h1>Robotic Manipulation, Visual SLAM &amp; Vision-Guided Grasping</h1>
+      <p class="hero-sub">Robotics Research &nbsp;·&nbsp;
+        <a href="https://github.com/ExusBurn/Codes" target="_blank" rel="noopener">GitHub Repository →</a>
+      </p>
+      <p>
+        A complete vision-guided robotic manipulation system featuring a 7-Degrees of Freedom arm,
+        YOLOv3 object detection, Visual SLAM for autonomous indoor navigation, and a contour-based
+        3D grasping pipeline. Achieves a 94% grasping success rate. Published at the
+        9th International Conference on Computer Vision and Image Processing (CVIP 2024).
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><span class="stat-num">94%</span><span class="stat-label">Grasping success rate</span></div>
+      <div class="stat-box"><span class="stat-num">7-DOF</span><span class="stat-label">Robotic arm degrees of freedom</span></div>
+      <div class="stat-box"><span class="stat-num">SLAM</span><span class="stat-label">Visual simultaneous localisation &amp; mapping</span></div>
+      <div class="stat-box"><span class="stat-num">CVIP<br/>2024</span><span class="stat-label">Peer-reviewed publication</span></div>
+    </div>
+
+    <div class="publication-box">
+      <span class="pub-label">Publication</span>
+      <p class="pub-title">Enhancing Robotic Interaction and Navigation with Pick and Place Operations and Visual SLAM Techniques</p>
+      <p class="pub-authors">Pravat Kumar Panda · Prashnik Bhattacharya · <strong>Aadithya Iyer</strong> · Deepak Mishra</p>
+      <p class="pub-venue">9th International Conference on Computer Vision and Image Processing (CVIP 2024)</p>
+      <p style="font-size:0.93rem; color:#444;">
+        Dept. of Avionics, Indian Institute of Space Science and Technology (IIST), Thiruvananthapuram &amp;
+        Dept. of Mechanical Engineering, BITS Goa Campus
+      </p>
+    </div>
+
+    <hr />
+
+    <section id="overview">
+      <h2>System Overview</h2>
+      <p>
+        Modern robotic systems face a fundamental challenge: how do you build a robot that can
+        navigate an unknown environment, identify objects within it, and physically interact with
+        them — all in real time, with the reliability required for practical deployment?
+      </p>
+      <p>
+        This project addresses that challenge through a tightly integrated system that combines
+        three core capabilities: <strong>autonomous navigation via Visual SLAM</strong>,
+        <strong>real-time object detection via YOLOv3</strong>, and a
+        <strong>3D grasping pipeline</strong> that computes object position and orientation from
+        camera data and executes a physically accurate grasp with a 7-DOF arm.
+      </p>
+      <p>
+        The system is designed to operate in indoor environments without prior maps or object
+        templates. It builds its understanding of the environment from scratch using only onboard
+        cameras, and its object detection generalises to novel instances within the target class.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="slam">
+      <h2>Visual SLAM: Autonomous Navigation</h2>
+      <p>
+        Simultaneous Localisation and Mapping (SLAM) is the problem of building a map of an
+        unknown environment while simultaneously tracking the agent's location within it —
+        a chicken-and-egg problem that requires solving both tasks jointly.
+      </p>
+      <p>
+        <strong>Visual SLAM</strong> solves this using only camera images, without GPS or
+        external positioning systems. Our implementation tracks visual features (corners, edges)
+        across consecutive frames to estimate camera motion, builds a sparse 3D map of the
+        environment from triangulated feature correspondences, and uses loop closure detection
+        to correct accumulated drift when the robot revisits a previously seen location.
+      </p>
+      <p>
+        The SLAM module outputs a real-time estimate of the robot's 6-DOF pose (position +
+        orientation) in the map frame, which feeds into the navigation planner. The robot
+        plans paths in the SLAM map, avoiding obstacles detected as occupied regions, and
+        drives autonomously to target locations.
+      </p>
+      <div class="callout">
+        <p>
+          <strong>Why Visual SLAM?</strong> Traditional SLAM uses LiDAR, which is expensive
+          and bulky. Visual SLAM uses standard cameras — cheaper, lighter, and richer in
+          semantic information. The tradeoff is computational cost and sensitivity to
+          lighting changes, both of which are managed in our implementation.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="detection">
+      <h2>Object Detection: YOLOv3</h2>
+      <p>
+        Object detection is handled by <strong>YOLOv3</strong> (You Only Look Once, version 3),
+        a single-stage real-time detector that predicts bounding boxes and class probabilities
+        directly from image pixels in one forward pass.
+      </p>
+      <p>
+        YOLO's architecture divides the input image into a grid and predicts bounding boxes
+        and class probabilities at each grid cell. At YOLOv3's scale — processing at multiple
+        resolutions — it achieves strong detection of objects at different sizes. Critically,
+        it runs in real time: fast enough to track objects as the robot moves and as the target
+        may shift position.
+      </p>
+      <p>
+        The detection system is used for two distinct purposes:
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Initial detection:</strong> Identifying the target object in the scene and
+          localising its 2D image position as the starting point for the grasping pipeline.
+        </li>
+        <li>
+          <strong>Tracking:</strong> Monitoring the object across frames to detect any sudden
+          positional changes — if the target moves between detection and grasp, the system
+          updates its estimate and adjusts the arm trajectory accordingly.
+        </li>
+      </ul>
+    </section>
+
+    <hr />
+
+    <section id="grasping">
+      <h2>The Grasping Pipeline</h2>
+      <p>
+        Knowing where an object is in a 2D image is not enough to grasp it — the robot needs
+        the object's 3D position and orientation in the robot's coordinate frame. The grasping
+        pipeline solves this in three steps.
+      </p>
+
+      <h3>Step 1: Contour-Based 3D Localisation</h3>
+      <p>
+        Once YOLOv3 provides a bounding box, a contour detection algorithm extracts the precise
+        boundary of the object within the box. Fitting an ellipse or polygon to this contour
+        gives a sub-pixel estimate of the object's centroid and principal axes in image space.
+      </p>
+      <p>
+        Depth information (from a depth camera or stereo rig) is used to back-project the 2D
+        centroid into 3D space. The result is the object's position in the camera frame, which
+        is then transformed to the robot base frame using the camera-to-robot extrinsic calibration.
+      </p>
+
+      <h3>Step 2: Orientation Estimation</h3>
+      <p>
+        Grasping an object correctly requires knowing not just where it is but how it is oriented
+        — the gripper must approach from the right angle to achieve a stable grasp. Our system
+        uses a multi-angle camera setup: by viewing the object from two or more positions,
+        we estimate the object's 3D orientation through geometric reasoning.
+      </p>
+      <p>
+        For elongated objects (bottles, tools), the principal axis of the contour gives the
+        dominant orientation directly. For symmetric objects, the system uses depth gradients
+        to distinguish the top surface and plan a grasp perpendicular to it.
+      </p>
+
+      <h3>Step 3: Arm Control &amp; Execution</h3>
+      <p>
+        With the 3D target pose (position + orientation) determined, the arm's inverse kinematics
+        solver computes the joint angles required to place the end-effector at the grasp point
+        with the correct approach direction. The 7-DOF arm has enough degrees of freedom to
+        reach the target in a wide range of configurations, allowing the controller to choose
+        a collision-free path.
+      </p>
+      <p>
+        The grasp is executed in two phases: a pre-grasp approach from a safe standoff distance,
+        followed by a final closing motion. The gripper closes on the object and lift is confirmed
+        by a force/torque threshold.
+      </p>
+
+      <h3>Human-Following</h3>
+      <p>
+        The system also implements a human-following mode: the robot detects a person via YOLO,
+        tracks their position across frames, and drives the rover base to maintain a fixed
+        distance. Payloads are transported to the person, placed in proximity, and the robot
+        returns to standby. This demonstrates the integration of SLAM navigation, real-time
+        tracking, and mobile manipulation in a single coordinated system.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="demos">
+      <h2>Demo Videos</h2>
+      <p>
+        The following videos show the system operating in real environments — not simulations.
+        The arm performs complete pick-and-place cycles, the rover navigates autonomously,
+        and the vision pipeline runs in real time throughout.
+      </p>
+      <div class="video-row">
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/9BNri5Lvjbc" title="Robotic arm demo 1"
+            frameborder="0" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/o5TzcQAbkE0" title="Robotic arm demo 2"
+            frameborder="0" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="results">
+      <h2>Experimental Results</h2>
+      <p>
+        The system was evaluated across a range of objects — varying shape, size, weight, and
+        surface texture — in an indoor lab environment. The robot was given a target object,
+        tasked with navigating to it, detecting it, and executing a grasp.
+      </p>
+      <div class="callout">
+        <p>
+          <strong>Grasping success rate: 94%</strong> across experimental trials. Failures
+          were concentrated in cases of specular reflection on glossy surfaces (confusing
+          the depth estimate) and partial occlusion of the target by clutter.
+        </p>
+      </div>
+      <p>
+        Navigation via Visual SLAM succeeded in all test environments, including environments
+        not seen during any calibration phase. Loop closure detection correctly identified
+        revisited locations and corrected pose drift in all cases.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="links">
+      <h2>Code &amp; Publication</h2>
+      <p>
+        <a href="https://github.com/ExusBurn/Codes" target="_blank" rel="noopener">→ GitHub: Codes</a>
+      </p>
+      <div class="tech-tags">
+        <span>Python</span><span>YOLOv3</span><span>Visual SLAM</span>
+        <span>OpenCV</span><span>Robot Kinematics</span><span>ROS</span>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>

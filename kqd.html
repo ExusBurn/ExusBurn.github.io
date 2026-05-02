@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Krylov Quantum Diagonalization · Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body data-page="kqd">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">Quantum Computing · High-Performance Computing · Final Project</span>
+      <h1>Distributed Krylov Quantum Diagonalization</h1>
+      <p class="hero-sub">Parallel Programming Course &nbsp;·&nbsp; IISc CDS, 2026 &nbsp;·&nbsp;
+        <a href="https://github.com/ExusBurn/Distributed-Krylov-Quantum-Diagonalization" target="_blank" rel="noopener">GitHub Repository →</a>
+      </p>
+      <p>
+        A fully distributed, GPU-accelerated implementation of the Krylov Quantum Diagonalization
+        algorithm for solving the time-independent Schrödinger equation on quantum spin systems.
+        Achieves a <strong>6.2× speedup</strong> over NVIDIA's CUDA-Q framework at 23 qubits,
+        with near-ideal strong scaling across 3 GPUs via CUDA-aware MPI.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><span class="stat-num">6.2×</span><span class="stat-label">Speedup over CUDA-Q baseline</span></div>
+      <div class="stat-box"><span class="stat-num">23</span><span class="stat-label">Qubits simulated</span></div>
+      <div class="stat-box"><span class="stat-num">3</span><span class="stat-label">GPUs (distributed)</span></div>
+      <div class="stat-box"><span class="stat-num">~ideal</span><span class="stat-label">Strong scaling efficiency</span></div>
+    </div>
+
+    <hr />
+
+    <section id="background">
+      <h2>Background &amp; Motivation</h2>
+      <p>
+        One of the central problems in quantum physics and quantum chemistry is the diagonalization
+        of large Hamiltonians — finding the eigenvalues and eigenvectors of matrices that describe
+        the energy landscape of a quantum system. For a system of <em>n</em> qubits, the Hamiltonian
+        lives in a Hilbert space of dimension 2<sup><em>n</em></sup>, making exact diagonalization
+        computationally infeasible beyond roughly 30–40 qubits on classical hardware.
+      </p>
+      <p>
+        The <strong>Heisenberg XXX spin chain</strong> is one of the canonical models studied in
+        quantum condensed matter physics. It describes a one-dimensional lattice of spin-½ particles
+        with isotropic nearest-neighbour interactions, governed by the Hamiltonian:
+      </p>
+      <div class="callout">
+        <p><strong>H = J · Σᵢ (Xᵢ Xᵢ₊₁ + Yᵢ Yᵢ₊₁ + Zᵢ Zᵢ₊₁)</strong></p>
+        <p>where X, Y, Z are Pauli operators and J is the coupling constant. This model is exactly
+        solvable via the Bethe ansatz, making it an excellent benchmark for numerical methods.</p>
+      </div>
+      <p>
+        Classically, iterative Krylov subspace methods — Lanczos, Arnoldi — are the state of the
+        art for large sparse eigenvalue problems. The <strong>Krylov Quantum Diagonalization (KQD)</strong>
+        algorithm translates this idea into the quantum computing setting: it builds a Krylov
+        subspace of low-energy states through repeated application of the Hamiltonian, then projects
+        and diagonalizes within this subspace.
+      </p>
+      <p>
+        NVIDIA's CUDA-Q framework provides high-level Python/C++ abstractions for quantum circuit
+        simulation on GPUs, but this abstraction carries overhead. This project asks: <em>how much
+        faster can we go by dropping down to hand-written CUDA kernels and explicit statevector
+        manipulation?</em>
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="algorithm">
+      <h2>The KQD Algorithm</h2>
+      <p>
+        The Krylov Quantum Diagonalization algorithm proceeds in three main phases:
+      </p>
+      <div style="display:flex; gap:2rem; align-items:flex-start; margin: 1.5rem 0;">
+        <div style="flex:1;">
+          <h3>1. Krylov Subspace Construction</h3>
+          <p>
+            Starting from an initial reference state |ψ₀⟩, the algorithm iteratively applies the
+            Hamiltonian H to generate a basis for the Krylov subspace:
+          </p>
+          <div class="callout">
+            <p><strong>K_m(H, |ψ₀⟩) = span{ |ψ₀⟩, H|ψ₀⟩, H²|ψ₀⟩, ..., H^(m-1)|ψ₀⟩ }</strong></p>
+          </div>
+          <p>
+            For k = 0, the overlap S(0) = ⟨ψ₀|ψ₀⟩ = 1 and H(0) = ⟨ψ₀|H|ψ₀⟩ are computed analytically.
+            For k = 1, 2, 3, … we use the <strong>Efficient Hadamard Test</strong> to extract Re(S),
+            Im(S), Re(H), and Im(H) without full statevector readout.
+          </p>
+          <h3>2. Toeplitz Assembly</h3>
+          <p>
+            Because the Heisenberg Hamiltonian is translation-invariant, the overlap and Hamiltonian
+            matrices are <strong>Toeplitz</strong>: S[i][j] = s_row[|i−j|] and H[i][j] = H_row[|i−j|].
+            This means only a single row needs to be computed — the full m×m matrix is assembled
+            by exploiting this structure, with conjugate symmetry for i &gt; j.
+          </p>
+          <h3>3. Generalised Eigenvalue Problem</h3>
+          <p>
+            The small m×m system <strong>H·c = E·S·c</strong> is solved classically via LAPACK.
+            The lowest eigenvalue gives the ground state energy estimate E₀. Accuracy improves
+            monotonically with the Krylov dimension m.
+          </p>
+        </div>
+        <div style="flex-shrink:0; text-align:center;">
+          <img src="normal_kqd.png" alt="KQD algorithm flowchart" style="max-width:220px; border-radius:8px; box-shadow:0 2px 14px rgba(0,0,0,0.15);" />
+          <p style="font-size:0.75rem; color:#888; margin-top:0.5rem;">Single-node KQD algorithm</p>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="implementation">
+      <h2>Implementation</h2>
+      <p>
+        The project provides three complete implementations, each targeting a different hardware model,
+        plus the CUDA-Q baseline for comparison.
+      </p>
+
+      <h3>CUDA / Hand-Written Kernels (Primary)</h3>
+      <p>
+        The core contribution is a direct statevector simulation engine written in CUDA C++. Rather
+        than going through any quantum circuit abstraction layer, we represent the quantum state as
+        a complex-valued array of length 2ⁿ and apply gates directly as in-place transformations on
+        this array.
+      </p>
+      <h4>Key optimisations</h4>
+      <ul class="prose-list">
+        <li>
+          <strong>Fused two-qubit gate application:</strong> Each Pauli interaction (XX, YY, ZZ) on
+          adjacent qubits is implemented as a single fused kernel that reads and writes the statevector
+          in one pass, avoiding redundant global memory traffic that would occur if each Pauli term
+          were applied separately.
+        </li>
+        <li>
+          <strong>Shared-memory tree reductions:</strong> Inner products ⟨ψᵢ|ψⱼ⟩ require summing
+          2ⁿ complex products. We use on-chip shared memory to perform partial reductions within
+          each thread block before writing to global memory, dramatically reducing memory bandwidth
+          pressure.
+        </li>
+        <li>
+          <strong>Statevector reuse:</strong> The Krylov vectors |ψ₀⟩, H|ψ₀⟩, ... are stored in
+          GPU memory and reused across inner product computations without re-copying. Gate applications
+          are done in-place wherever possible.
+        </li>
+        <li>
+          <strong>Coalesced memory access:</strong> Thread indices are mapped to statevector indices
+          such that adjacent threads access adjacent memory locations, maximising cache line utilisation
+          and GPU memory bandwidth.
+        </li>
+      </ul>
+
+      <h3>Distributed Multi-GPU (CUDA-aware MPI)</h3>
+      <div style="display:flex; gap:2rem; align-items:flex-start; margin-bottom:1rem;">
+        <div style="flex:1;">
+          <p>
+            For qubit counts large enough to exceed a single GPU's memory, the statevector is partitioned
+            across multiple GPUs using MPI. Each Krylov step k spawns three parallel lanes — PREP,
+            U(t), then Pauli measurement — computing S(k) and H(k) simultaneously across GPUs.
+            All results feed upward into a single GEVP solve, as shown in the circuit diagram.
+          </p>
+          <p>
+            Crucially, we use <strong>CUDA-aware MPI</strong>, which allows
+            direct GPU-to-GPU transfers over NVLink or InfiniBand without staging data through CPU memory.
+            The partitioning scheme assigns contiguous blocks of statevector amplitudes to each GPU.
+            Two-qubit gate application on qubits that straddle a partition boundary requires a
+            communication phase, while fully local gates run without synchronisation.
+          </p>
+        </div>
+        <div style="flex-shrink:0; text-align:center;">
+          <img src="distributed_kqd.png" alt="Distributed KQD circuit diagram" style="max-width:240px; border-radius:8px; box-shadow:0 2px 14px rgba(0,0,0,0.15);" />
+          <p style="font-size:0.75rem; color:#888; margin-top:0.5rem;">Distributed multi-GPU KQD</p>
+        </div>
+      </div>
+
+      <h3>CPU Reference (OpenMP + MPI)</h3>
+      <p>
+        A CPU port of the same algorithm is provided using OpenMP for shared-memory parallelism
+        within a node and MPI for distributed execution. This serves as both a correctness reference
+        and a performance baseline for estimating the GPU advantage.
+      </p>
+
+      <h3>CUDA-Q Baseline</h3>
+      <p>
+        NVIDIA's CUDA-Q framework provides a high-level Python API for quantum circuit definition
+        and GPU-accelerated simulation. The same KQD algorithm is implemented at this level to
+        provide a fair comparison against our low-level approach. All implementations produce
+        the same eigenvalue results (verified to numerical precision), with differences only in
+        performance.
+      </p>
+
+      <div class="tech-tags">
+        <span>CUDA C++</span><span>CUDA-aware MPI</span><span>OpenMP</span>
+        <span>NVIDIA CUDA-Q</span><span>cuBLAS</span><span>LAPACK</span>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="results">
+      <h2>Results &amp; Performance</h2>
+      <p>
+        All benchmarks were run on a multi-GPU system with NVIDIA GPUs connected via NVLink,
+        running the Heisenberg XXX spin chain for various qubit counts with a fixed Krylov
+        dimension m = 8.
+      </p>
+
+      <h3>Single-GPU vs. CUDA-Q</h3>
+      <p>
+        At 23 qubits, our hand-written CUDA implementation runs <strong>6.2× faster</strong> than
+        the CUDA-Q baseline. The speedup grows with qubit count, reflecting how the overhead of the
+        circuit abstraction layer (gate scheduling, circuit compilation, intermediate representations)
+        becomes proportionally larger relative to the actual compute work as system size increases.
+      </p>
+      <p>
+        At smaller qubit counts (below 18), the frameworks are comparable — the circuit sizes are
+        small enough that abstraction overhead is negligible relative to GPU launch and memory
+        allocation costs. The gap opens decisively at 20+ qubits where statevector operations
+        dominate runtime.
+      </p>
+
+      <h3>Strong Scaling (Multi-GPU)</h3>
+      <p>
+        Strong scaling measures how runtime decreases as we add more GPUs for a fixed problem size.
+        Our distributed implementation achieves near-ideal scaling from 1 to 3 GPUs: doubling the
+        GPU count roughly halves the runtime. This demonstrates that the MPI communication overhead
+        is small relative to the computation — a consequence of CUDA-aware MPI's direct GPU transfers
+        and the communication-overlap scheduling described above.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Key takeaway:</strong> The combination of low-level CUDA kernel optimisation and
+          CUDA-aware MPI for distribution produces a quantum simulation engine that significantly
+          outperforms high-level framework alternatives, demonstrating the continued value of
+          systems-level programming for performance-critical scientific computing.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="links">
+      <h2>Code &amp; Repository</h2>
+      <p>
+        The full source code — CUDA kernels, MPI harness, CUDA-Q baseline, build scripts, and
+        benchmarking utilities — is available on GitHub.
+      </p>
+      <p>
+        <a href="https://github.com/ExusBurn/Distributed-Krylov-Quantum-Diagonalization" target="_blank" rel="noopener">
+          → GitHub: Distributed-Krylov-Quantum-Diagonalization
+        </a>
+      </p>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>
