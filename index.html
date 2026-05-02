@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <span class="nav-logo">AI</span>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-content">
+      <p class="hero-greeting">Hi, I'm</p>
+      <h1 class="hero-name">Aadithya Iyer</h1>
+      <p class="hero-tagline">
+        Graduate researcher at <span class="accent">IISc Bangalore</span> —<br />
+        quantum computing · high-performance systems · machine learning
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">View My Work</a>
+        <a href="https://github.com/ExusBurn" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+      </div>
+    </div>
+    <div class="hero-bg">
+      <canvas id="particle-canvas"></canvas>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">About</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I'm a graduate student in the <strong>Department of Computational and Data Sciences</strong>
+            at the Indian Institute of Science (IISc), Bangalore. My work sits at the intersection of
+            quantum algorithms, GPU-accelerated computing, and modern machine learning.
+          </p>
+          <p>
+            I enjoy building things from scratch — hand-written CUDA kernels for quantum simulation,
+            classical ML algorithms in NumPy, and vision-guided robotic manipulation systems. I care
+            about understanding <em>why</em> things work, not just that they do.
+          </p>
+          <p>
+            Outside coursework I've worked on robotics research involving robotic arm manipulation,
+            object tracking, and autonomous pick-and-place pipelines.
+          </p>
+        </div>
+        <div class="about-stats">
+          <div class="stat-card">
+            <span class="stat-num">6.2×</span>
+            <span class="stat-label">GPU speedup over CUDA-Q baseline</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">94×</span>
+            <span class="stat-label">KNN vectorization speedup</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">3</span>
+            <span class="stat-label">GPUs in distributed simulation</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">IISc</span>
+            <span class="stat-label">Indian Institute of Science, Bangalore</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <h2 class="section-title">Projects</h2>
+      <div class="projects-grid">
+
+        <a href="https://github.com/ExusBurn/Distributed-Krylov-Quantum-Diagonalization" target="_blank" rel="noopener" class="project-card featured">
+          <div class="project-header">
+            <span class="project-tag">Quantum · HPC</span>
+            <span class="project-icon">⚛</span>
+          </div>
+          <h3>Distributed Krylov Quantum Diagonalization</h3>
+          <p>
+            GPU-accelerated KQD algorithm for solving the time-independent Schrödinger equation on the
+            Heisenberg XXX spin chain. Achieves <strong>6.2× speedup</strong> over NVIDIA CUDA-Q baseline
+            at 23 qubits with near-ideal strong scaling across 3 GPUs.
+          </p>
+          <div class="project-tech">
+            <span>CUDA</span><span>MPI</span><span>C++</span><span>OpenMP</span><span>CUDA-Q</span>
+          </div>
+        </a>
+
+        <a href="https://github.com/ExusBurn/SolvingLDE_QuantumComputing" target="_blank" rel="noopener" class="project-card">
+          <div class="project-header">
+            <span class="project-tag">Quantum · Numerics</span>
+            <span class="project-icon">🌊</span>
+          </div>
+          <h3>Quantum Solution of the Heat Equation</h3>
+          <p>
+            Implements the Linear Combination of Hamiltonian Simulation (LCHS) algorithm in Qiskit to solve
+            the 1D diffusion equation. Benchmarks quantum circuits against classical FTCS finite difference
+            with spectral analysis.
+          </p>
+          <div class="project-tech">
+            <span>Qiskit</span><span>Python</span><span>NumPy</span><span>SciPy</span>
+          </div>
+        </a>
+
+        <a href="https://github.com/ExusBurn/PRNN_Assignments" target="_blank" rel="noopener" class="project-card">
+          <div class="project-header">
+            <span class="project-tag">Machine Learning</span>
+            <span class="project-icon">🧠</span>
+          </div>
+          <h3>Pattern Recognition &amp; Neural Networks</h3>
+          <p>
+            Three-assignment deep-dive: classical ML from NumPy (SVM, GMM, logistic regression), deep learning
+            with PyTorch (CNNs, Transformers, Vision Transformers), and generative models (GANs, VAEs) plus
+            REINFORCE RL on real medical and environmental datasets.
+          </p>
+          <div class="project-tech">
+            <span>PyTorch</span><span>NumPy</span><span>Python</span><span>Transformers</span><span>GANs</span>
+          </div>
+        </a>
+
+        <a href="https://github.com/ExusBurn/IIScSecondSem" target="_blank" rel="noopener" class="project-card">
+          <div class="project-header">
+            <span class="project-tag">Coursework</span>
+            <span class="project-icon">📚</span>
+          </div>
+          <h3>IISc Second Semester — CDS</h3>
+          <p>
+            Complete second-semester coursework: Parallel Programming (GPU kernels), Numerical Solutions of
+            Differential Equations (FEM/FDM), Pattern Recognition and Neural Networks, and NLP.
+          </p>
+          <div class="project-tech">
+            <span>CUDA</span><span>Python</span><span>Jupyter</span><span>PyTorch</span>
+          </div>
+        </a>
+
+        <a href="https://github.com/ExusBurn/Codes" target="_blank" rel="noopener" class="project-card">
+          <div class="project-header">
+            <span class="project-tag">Robotics</span>
+            <span class="project-icon">🤖</span>
+          </div>
+          <h3>Robotic Manipulation &amp; Vision</h3>
+          <p>
+            Research-grade code for robotic arm pick-and-place tasks — blind operations, camera-guided
+            perception, real-time object tracking, orientation detection, and arm–rover coordination for
+            dynamic grasping.
+          </p>
+          <div class="project-tech">
+            <span>Python</span><span>Computer Vision</span><span>ROS</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container">
+      <h2 class="section-title">Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h4>Quantum Computing</h4>
+          <ul>
+            <li>Qiskit</li>
+            <li>NVIDIA CUDA-Q</li>
+            <li>Quantum circuit design</li>
+            <li>Hamiltonian simulation</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4>High-Performance Computing</h4>
+          <ul>
+            <li>CUDA / GPU kernels</li>
+            <li>MPI (distributed)</li>
+            <li>OpenMP (shared memory)</li>
+            <li>CUDA-aware MPI</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4>Machine Learning</h4>
+          <ul>
+            <li>PyTorch</li>
+            <li>Transformers / ViT</li>
+            <li>GANs · VAEs · Diffusion</li>
+            <li>Reinforcement Learning</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4>Languages &amp; Tools</h4>
+          <ul>
+            <li>Python · C++ · CUDA</li>
+            <li>NumPy · SciPy · JAX</li>
+            <li>Git · Linux · Jupyter</li>
+            <li>LaTeX</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4>Numerics &amp; Math</h4>
+          <ul>
+            <li>Finite difference / element</li>
+            <li>Krylov subspace methods</li>
+            <li>Linear algebra (dense/sparse)</li>
+            <li>Spectral methods</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4>Robotics</h4>
+          <ul>
+            <li>Robotic arm control</li>
+            <li>Computer vision / perception</li>
+            <li>Pick-and-place pipelines</li>
+            <li>Sensor fusion</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title">Contact</h2>
+      <p class="contact-sub">I'm always open to interesting conversations — research collaborations, opportunities, or just a chat about quantum computing.</p>
+      <div class="contact-links">
+        <a href="mailto:aadi.iiyyer@gmail.com" class="contact-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          aadi.iiyyer@gmail.com
+        </a>
+        <a href="https://github.com/ExusBurn" target="_blank" rel="noopener" class="contact-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          ExusBurn
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Built with vanilla HTML/CSS/JS · Hosted on GitHub Pages</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
