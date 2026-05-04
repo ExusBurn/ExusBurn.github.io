@@ -8,60 +8,92 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* ── Compact CV overrides ── */
+    .content { padding: 1.8rem 3rem; }
+
+    .page-hero { margin-bottom: 1rem; padding-bottom: 0.8rem; }
+    .page-hero h1 { font-size: 1.4rem; margin-bottom: 0.1rem; }
+    .page-hero .hero-sub { margin-bottom: 0.3rem; }
+    .page-hero p { font-size: 0.84rem; line-height: 1.45; margin-bottom: 0.3rem; }
+
+    section { margin-bottom: 0; }
+    section h2 { font-size: 1rem; margin-bottom: 0.35rem; padding-bottom: 0.18rem; }
+    section h3 { font-size: 0.9rem; margin: 0.65rem 0 0.1rem; }
+    section h4 { font-size: 0.78rem; margin: 0.35rem 0 0.1rem; }
+    section p { font-size: 0.84rem; line-height: 1.45; margin-bottom: 0.25rem; }
+
+    hr { margin: 0.7rem 0; }
+
+    .prose-list { gap: 0.18rem; margin: 0.15rem 0 0.35rem; }
+    .prose-list li { font-size: 0.84rem; line-height: 1.4; padding-left: 1.1rem; }
+    .prose-list li::before { font-size: 0.7rem; top: 0.2rem; }
+
+    .course-table { font-size: 0.82rem; margin: 0.4rem 0 0.6rem; }
+    .course-table th { padding: 0.28rem 0.6rem; font-size: 0.72rem; }
+    .course-table td { padding: 0.3rem 0.6rem; }
+
+    .timeline-body { padding-bottom: 0.4rem; }
+    .timeline-body h4 { font-size: 0.84rem; }
+    .timeline-body p { font-size: 0.82rem; line-height: 1.4; margin: 0; }
+    .timeline-dot { width: 16px; height: 16px; margin-top: 4px; }
+    .timeline-item::before { left: 7px; top: 22px; }
+    .timeline-item { gap: 0.9rem; }
+
+    .publication-box { padding: 0.45rem 0.85rem; margin: 0.3rem 0 0.25rem; }
+    .pub-label { font-size: 0.66rem; margin-bottom: 0.15rem; }
+    .pub-title { font-size: 0.84rem; margin-bottom: 0.1rem; }
+    .pub-venue { font-size: 0.74rem; margin-bottom: 0; }
+
+    .cv-entry { margin: 0.6rem 0 0; }
+    .cv-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.12rem;
+      margin-bottom: 0.25rem;
+    }
+    .cv-entry-header h3 { margin: 0; font-size: 0.9rem; }
+    .cv-date {
+      font-family: var(--sans);
+      font-size: 0.76rem;
+      color: var(--light);
+      white-space: nowrap;
+      margin-left: 1rem;
+    }
+    .cv-sub {
+      font-family: var(--sans);
+      font-size: 0.77rem;
+      color: var(--accent);
+      font-style: italic;
+      margin-bottom: 0.2rem;
+    }
+
     .download-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
       background: var(--accent);
       color: #fff;
       font-family: var(--sans);
-      font-size: 0.88rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      padding: 0.55rem 1.25rem;
+      padding: 0.4rem 1rem;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-      margin-top: 1rem;
+      margin-top: 0.7rem;
+      transition: background 0.2s;
     }
-    .download-btn:hover { background: var(--accent-l); transform: translateY(-2px); }
-
-    .cv-section-date {
-      font-family: var(--sans);
-      font-size: 0.78rem;
-      color: var(--light);
-      font-weight: 500;
-      float: right;
-      margin-top: 0.2rem;
-    }
-
-    .proj-group {
-      margin: 1.5rem 0 0.5rem;
-      padding-bottom: 0.25rem;
-      border-bottom: 1px solid var(--border);
-      overflow: hidden;
-    }
-
-    .proj-group h3 {
-      display: inline;
-      font-family: var(--sans);
-      font-size: 0.96rem;
-      font-weight: 700;
-      color: var(--text);
-      text-transform: none;
-      letter-spacing: 0;
-      margin: 0;
-    }
+    .download-btn:hover { background: var(--accent-l); }
 
     @media print {
       .sidebar, .download-btn { display: none !important; }
       .page-wrapper { display: block !important; }
-      .content { padding: 1.5rem 2.5rem !important; }
+      .content { padding: 1rem 2rem !important; }
       a { color: inherit !important; text-decoration: none !important; }
-      .pub-label { color: var(--accent) !important; }
       section h2 { page-break-after: avoid; }
-      h3, h4 { page-break-after: avoid; }
+      .cv-entry { page-break-inside: avoid; }
       .timeline-item::before { display: none; }
     }
   </style>
@@ -72,27 +104,24 @@
   <main class="content">
 
     <!-- Hero -->
-    <div class="page-hero" style="display:grid; grid-template-columns: 1fr 170px; gap: 2.5rem; align-items: start;">
+    <div class="page-hero" style="display:grid; grid-template-columns: 1fr 150px; gap: 2rem; align-items: start;">
       <div>
         <span class="hero-tag">Curriculum Vitae</span>
         <h1>Aadithya Iyer</h1>
         <p class="hero-sub">Graduate Student · Indian Institute of Science, Bangalore · 2025–</p>
         <p>
-          M.Tech. student in Computational and Data Sciences at IISc Bangalore, with a background
-          in mechanical engineering from BITS Goa. Work spans quantum computing, high-performance
-          GPU simulation, machine learning, numerical methods, and robotics — combining theoretical
-          depth with hands-on systems implementation.
+          M.Tech. in Computational and Data Sciences at IISc Bangalore. Background in mechanical
+          engineering (BITS Goa). Work spans quantum computing, GPU-accelerated simulation,
+          machine learning, numerical methods, and robotics.
         </p>
-        <button class="download-btn" onclick="window.print()">
-          ↓ Download as PDF
-        </button>
+        <button class="download-btn" onclick="window.print()">↓ Download as PDF</button>
       </div>
-      <div style="text-align:center; padding-top:0.5rem;">
+      <div style="text-align:center; padding-top:0.4rem;">
         <img src="photo.jpg" alt="Aadithya Iyer"
-          style="width:100%; border-radius:8px; box-shadow:0 3px 18px rgba(0,0,0,0.15);"
+          style="width:100%; border-radius:7px; box-shadow:0 2px 14px rgba(0,0,0,0.15);"
           onerror="this.style.display='none'" />
-        <p style="font-family:var(--sans); font-size:0.72rem; color:var(--light); margin-top:0.4rem;">
-          IISc, Bangalore · 2025–
+        <p style="font-family:var(--sans); font-size:0.68rem; color:var(--light); margin-top:0.3rem;">
+          IISc Bangalore · 2025–
         </p>
       </div>
     </div>
@@ -103,7 +132,7 @@
       <table class="course-table">
         <thead>
           <tr>
-            <th>Degree / Qualification</th>
+            <th>Degree</th>
             <th>Institution</th>
             <th>Score</th>
             <th>Year</th>
@@ -114,11 +143,11 @@
             <td><strong>M.Tech. Computational and Data Science</strong></td>
             <td>Indian Institute of Science, Bangalore</td>
             <td>8.90 CGPA</td>
-            <td>2027 (expected)</td>
+            <td>2027 (exp.)</td>
           </tr>
           <tr>
             <td><strong>B.E. Mechanical Engineering</strong></td>
-            <td>Birla Institute of Technology and Science, KK Birla Goa Campus</td>
+            <td>BITS Pilani, KK Birla Goa Campus</td>
             <td>7.94 CGPA</td>
             <td>2024</td>
           </tr>
@@ -148,10 +177,10 @@
           <div class="timeline-dot"></div>
           <div class="timeline-body">
             <h4>Thermal Engineer · Indian Space Research Organisation (ISRO)</h4>
-            <p>June 2024 – November 2024 &nbsp;·&nbsp; Government of India</p>
-            <p style="margin-top:0.5rem; color:var(--muted);">
-              Worked as a Thermal Engineer at ISRO for six months. Specific work and technical
-              details cannot be disclosed in accordance with government organisation protocols.
+            <p>June 2024 – November 2024 · Government of India</p>
+            <p style="margin-top:0.2rem;">
+              Six-month engagement as a Thermal Engineer. Specific work cannot be disclosed
+              per government organisation protocols.
             </p>
           </div>
         </div>
@@ -160,152 +189,61 @@
 
     <hr />
 
-    <!-- Research Interests -->
-    <section id="research">
-      <h2>Research Interests</h2>
-
-      <h3>Quantum Algorithms &amp; Quantum Computing</h3>
-      <p>
-        My primary research interest lies in quantum computing — specifically, in algorithms that
-        offer provable advantages over classical methods for computationally hard problems. I have
-        worked with quantum linear algebra (Krylov subspace methods adapted for quantum hardware),
-        Hamiltonian simulation techniques (LCHS, LCU), and foundational quantum algorithms
-        including Grover's search, Shor's factoring, and quantum error correction. I am
-        particularly interested in the boundary between near-term NISQ devices and fault-tolerant
-        computation, and in understanding what quantum speedups are practically achievable today.
-      </p>
-
-      <h3>High-Performance Computing &amp; GPU Programming</h3>
-      <p>
-        I believe that algorithmic insight without efficient implementation is incomplete. My HPC
-        work focuses on writing hand-tuned CUDA kernels for quantum statevector simulation,
-        designing distributed multi-GPU systems using CUDA-aware MPI, and exploiting architectural
-        features — shared-memory reductions, coalesced memory access, fused kernels — to close the
-        gap between theoretical and hardware performance. I am interested in cases where low-level
-        systems programming decisively outperforms high-level framework abstractions.
-      </p>
-
-      <h3>Machine Learning</h3>
-      <p>
-        My ML interests span both theory and implementation. I have built core algorithms from
-        scratch — Gaussian Discriminant Analysis, Logistic Regression, Poisson Regression via
-        GLM, feedforward and convolutional neural networks, Naive Bayes with Laplace smoothing —
-        and applied them to benchmark tasks including digit recognition (MNIST), binary
-        classification (MakeMoons), and regression. I am interested in the mathematical
-        foundations of learning: generalisation bounds, optimisation landscapes, and why
-        particular architectures work.
-      </p>
-
-      <h3>Numerical Methods for Differential Equations</h3>
-      <p>
-        I am interested in numerical methods for PDEs — finite difference schemes, Gaussian
-        quadrature, spectral methods — and in emerging quantum-classical hybrid approaches to
-        solving differential equations. My LCHS project sits at this intersection: implementing
-        a quantum algorithm (Linear Combination of Hamiltonian Simulation) to solve the 1D
-        diffusion equation and comparing against classical FTCS finite difference, with rigorous
-        spectral error analysis across Fourier modes.
-      </p>
-
-      <h3>Robotics &amp; Computer Vision</h3>
-      <p>
-        I have worked on visual SLAM and robotic manipulation, resulting in a publication at
-        CVIP 2024. My interest in robotics is shaped by the challenge of building systems
-        that must perceive, reason, and act reliably in real environments — where sensor noise,
-        computational constraints, and physical dynamics all interact.
-      </p>
-    </section>
-
-    <hr />
-
     <!-- Projects & Publications -->
     <section id="projects">
       <h2>Projects &amp; Publications</h2>
 
-      <h3>Distributed Krylov Quantum Diagonalization</h3>
-      <div class="tech-tags">
-        <span>Quantum Computing</span><span>CUDA C++</span><span>CUDA-Aware MPI</span>
-        <span>OpenMP</span><span>cuBLAS</span><span>LAPACK</span>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>Distributed Krylov Quantum Diagonalization</h3>
+          <span class="cv-date">2025–26</span>
+        </div>
+        <p class="cv-sub">Final project · Introduction to Scalable Systems (Parallel Programming) · IISc CDS</p>
+        <p>
+          Built a fully distributed, GPU-accelerated system for quantum ground-state energy
+          estimation via the KQD algorithm, implementing hand-written CUDA kernels (fused Pauli
+          gates, shared-memory reductions, coalesced access) and CUDA-aware MPI for multi-GPU
+          statevector partitioning, alongside a CPU reference in OpenMP + MPI. This project
+          deepened my understanding of low-level GPU architecture, the cost of abstraction in
+          scientific frameworks, and communication-overlap strategies in distributed systems.
+          Achieved 6.2× speedup over NVIDIA CUDA-Q at 23 qubits with near-ideal strong scaling
+          across 3 GPUs. <a href="kqd.html">→</a>
+        </p>
       </div>
-      <p>
-        <em>Final project, Introduction to Scalable Systems (Parallel Programming) · IISc CDS, 2025–26</em>
-      </p>
-      <p>
-        Designed and implemented a fully distributed, GPU-accelerated system for finding ground
-        state energies of quantum spin systems via the Krylov Quantum Diagonalization (KQD)
-        algorithm. The algorithm builds a Krylov subspace — span{|ψ₀⟩, H|ψ₀⟩, H²|ψ₀⟩, …} —
-        from an initial quantum state and iteratively refines the ground state energy estimate
-        by solving a small generalized eigenvalue problem H·c = E·S·c classically via LAPACK.
-      </p>
-      <p>
-        The implementation targets the Heisenberg XXX spin chain, representing quantum states
-        as complex statevectors of length 2ⁿ in GPU memory and applying Pauli interactions
-        as hand-written CUDA kernels. Key optimisations include fused two-qubit gate kernels
-        (reducing memory passes per interaction), shared-memory tree reductions for inner
-        products, statevector reuse across Krylov iterations, and coalesced memory access
-        patterns. For multi-GPU runs, the statevector is partitioned across devices using
-        CUDA-aware MPI, enabling direct GPU-to-GPU transfers without CPU staging.
-      </p>
-      <ul class="prose-list">
-        <li><strong>6.2× speedup</strong> over NVIDIA CUDA-Q baseline at 23 qubits — the gap
-          widens with qubit count as framework abstraction overhead scales with problem size</li>
-        <li><strong>Near-ideal strong scaling</strong> from 1 to 3 GPUs — doubling GPUs roughly
-          halves runtime, demonstrating that MPI communication overhead is negligible relative
-          to computation</li>
-        <li>CPU reference implementation in OpenMP + MPI for correctness verification and
-          baseline performance measurement</li>
-      </ul>
-      <p><a href="kqd.html">Full project writeup →</a></p>
 
-      <h3>Quantum Solution of the Heat Equation (LCHS)</h3>
-      <div class="tech-tags">
-        <span>Quantum Computing</span><span>Qiskit</span><span>Python</span>
-        <span>NumPy</span><span>SciPy</span>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>Quantum Solution of the Heat Equation (LCHS)</h3>
+          <span class="cv-date">2025–26</span>
+        </div>
+        <p class="cv-sub">Final project · Numerical Solution of Differential Equations · IISc CDS</p>
+        <p>
+          Implemented the Linear Combination of Hamiltonian Simulation (LCHS) algorithm in
+          Qiskit to solve the 1D diffusion equation, using 4 system qubits, 6 ancilla qubits,
+          and 64 Gauss–Legendre quadrature nodes as Hamiltonian simulation weights within a
+          V-PREPARE / SELECT / UNPREP circuit structure, validated against classical FTCS finite
+          difference and analysed spectrally across Fourier modes. This taught me how quantum
+          algorithms map to linear operator problems and the interplay between quadrature
+          accuracy and circuit fidelity. LCHS accurately reproduced low-frequency modes;
+          high-frequency error increased as expected due to quadrature truncation. <a href="lchs.html">→</a>
+        </p>
       </div>
-      <p>
-        <em>Final project, Numerical Solution of Differential Equations · IISc CDS, 2025–26</em>
-      </p>
-      <p>
-        Implemented the Linear Combination of Hamiltonian Simulation (LCHS) algorithm in
-        Qiskit to solve the one-dimensional diffusion equation ∂u/∂t = α(t)·∂²u/∂x² on
-        a periodic domain. The spatial domain is discretised into 16 grid points (4 qubits);
-        time integration uses 64 Gauss–Legendre quadrature nodes, each corresponding to a
-        Hamiltonian simulation circuit weighted by its quadrature coefficient.
-      </p>
-      <p>
-        The quantum circuit consists of a state preparation stage, a V-PREPARE block loading
-        quadrature weights across 6 ancilla qubits, a SELECT unitary applying controlled
-        Hamiltonian simulations, and an UNPREP stage to project onto the desired linear
-        combination. Results were validated against a classical Forward-Time Centered-Space
-        (FTCS) finite difference solver and analysed spectrally — LCHS accurately reproduces
-        low-frequency Fourier modes, with relative error increasing for high-frequency modes
-        due to quadrature truncation.
-      </p>
-      <p><a href="lchs.html">Full project writeup →</a></p>
 
-      <h3>Visual SLAM &amp; Robotic Manipulation</h3>
-      <div class="tech-tags">
-        <span>Robotics</span><span>Computer Vision</span><span>ROS</span>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>Visual SLAM &amp; Robotic Manipulation</h3>
+          <span class="cv-date">2024</span>
+        </div>
+        <div class="publication-box">
+          <span class="pub-label">Published · CVIP 2024</span>
+          <p class="pub-title">Visual SLAM and Robotic Manipulation</p>
+          <p class="pub-venue">Conference on Computer Vision and Image Processing, 2024</p>
+        </div>
+        <p>
+          Research on visual simultaneous localisation and mapping combined with robotic
+          manipulation, published at CVIP 2024. <a href="robotics.html">→</a>
+        </p>
       </div>
-      <div class="publication-box">
-        <span class="pub-label">Published · CVIP 2024</span>
-        <p class="pub-title">Visual SLAM and Robotic Manipulation</p>
-        <p class="pub-venue">Conference on Computer Vision and Image Processing, 2024</p>
-      </div>
-      <p>
-        Research on visual simultaneous localisation and mapping (SLAM) combined with
-        robotic manipulation. Published at CVIP 2024.
-        <a href="robotics.html">Full project writeup →</a>
-      </p>
-
-      <h3>Pattern Recognition &amp; Neural Networks</h3>
-      <div class="tech-tags">
-        <span>Machine Learning</span><span>Python</span><span>PyTorch</span>
-      </div>
-      <p>
-        Coursework and assignments in pattern recognition, probabilistic classifiers, and
-        neural network architectures as part of the IISc M.Tech. curriculum.
-        <a href="ml.html">View →</a>
-      </p>
     </section>
 
     <hr />
@@ -314,104 +252,73 @@
     <section id="course-projects">
       <h2>Course Projects</h2>
 
-      <div class="proj-group">
-        <h3>First Semester Course Projects</h3>
-        <span class="cv-section-date">Aug 2025 – Dec 2025</span>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>Pattern Recognition &amp; Neural Networks</h3>
+          <span class="cv-date">Aug 2025 – May 2026</span>
+        </div>
+        <p class="cv-sub">IISc CDS · 3 Assignments</p>
+        <p>
+          <strong>Assignment 1</strong> — implemented classical ML algorithms from scratch in
+          NumPy: OLS Regression (with QR decomposition for numerical stability), SVMs in primal
+          and dual form with RBF/polynomial/linear kernels, Logistic Regression (gradient descent
+          and Newton's method), Gaussian Mixture Models via EM, Naïve Bayes, and a vectorised
+          KNN achieving 94× speedup over a naive loop via NumPy broadcasting.
+        </p>
+        <p>
+          <strong>Assignment 2</strong> — deep learning in PyTorch on real-world datasets (Delhi
+          air quality forecasting, PlantVillage crop disease classification, APTOS retinal
+          grading): MLPs, CNNs with Grad-CAM, RNNs/LSTMs/GRUs, and a Vision Transformer built
+          from scratch (multi-head self-attention, positional encoding, patch embedding), with
+          Fréchet Inception Distance computed for generative quality assessment.
+        </p>
+        <p>
+          <strong>Assignment 3</strong> — generative models and RL: Random Forests, Gradient
+          Boosted Trees, DCGAN, WGAN-GP (addressing training instability), Variational
+          Autoencoders (ELBO derivation, reparameterisation trick), SimCLR self-supervised
+          contrastive learning, and REINFORCE with baseline subtraction. Learned how supervised,
+          generative, self-supervised, and RL paradigms address fundamentally distinct problem
+          structures. <a href="ml.html">→</a>
+        </p>
       </div>
-      <ul class="prose-list">
-        <li>
-          <strong>Gradient Descent &amp; Momentum for Robotic Arm Trajectory Optimisation</strong> —
-          implemented Vanilla Gradient Descent and Momentum-based parameter updates to optimise
-          the trajectory of a robotic arm; analysed convergence behaviour and compared algorithmic
-          performance across both optimisers.
-        </li>
-        <li>
-          <strong>Image Compression via Low-Rank SVD Approximation</strong> — built an image
-          compression pipeline using truncated Singular Value Decomposition, achieving controlled
-          lossy compression across varying rank budgets.
-        </li>
-        <li>
-          <strong>PageRank via Power Iteration</strong> — implemented the classical PageRank
-          algorithm using power iteration; analysed convergence using the Rayleigh Quotient,
-          Residual Norm, and absolute error between successive iterates.
-        </li>
-        <li>
-          <strong>QR Factorisation Techniques</strong> — implemented and compared Classical
-          Gram-Schmidt, Modified Gram-Schmidt, and Householder QR; evaluated numerical accuracy
-          of all three methods for polynomial function approximation.
-        </li>
-        <li>
-          <strong>Parallelised K-Means with OpenMP</strong> — accelerated centroid updates using
-          OpenMP; achieved a maximum speedup of 14× with 32 threads under static scheduling, and
-          1.5× with 4 threads under dynamic scheduling.
-        </li>
-        <li>
-          <strong>Distributed Sparse Matrix–Vector Multiplication (SpMV) via MPI</strong> —
-          implemented a distributed SpMV routine achieving scalable parallel performance across
-          multiple nodes.
-        </li>
-      </ul>
 
-      <div class="proj-group" style="margin-top:2rem;">
-        <h3>Winter Break — Independent Projects</h3>
-        <span class="cv-section-date">Dec 2025 – Jan 2026</span>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>First Semester Projects</h3>
+          <span class="cv-date">Aug – Dec 2025</span>
+        </div>
+        <ul class="prose-list">
+          <li>Gradient Descent &amp; Momentum for robotic arm trajectory optimisation — convergence analysis across both optimisers</li>
+          <li>Image compression pipeline via low-rank SVD approximation</li>
+          <li>PageRank via power iteration — convergence tracked using Rayleigh Quotient, Residual Norm, and successive-iterate error</li>
+          <li>QR Factorisation — Classical Gram-Schmidt, Modified Gram-Schmidt, and Householder compared for numerical accuracy in polynomial approximation</li>
+          <li>Parallelised K-Means with OpenMP — 14× speedup (32 threads, static scheduling); 1.5× (4 threads, dynamic scheduling)</li>
+          <li>Distributed Sparse Matrix–Vector Multiplication (SpMV) via MPI across multiple nodes</li>
+        </ul>
       </div>
-      <ul class="prose-list">
-        <li>
-          <strong>ML Algorithms from Scratch</strong> — implemented a full suite of machine
-          learning algorithms without library wrappers: Gaussian Discriminant Analysis and
-          Logistic Regression (F1 0.91–0.913, accuracy 0.9–0.92); Poisson Regression via GLM
-          with Hessian-based gradient ascent (0.09% MAPE); a feedforward neural network with
-          sigmoid activation and MSE loss (92% test accuracy, 0.92 F1 on make_moons); a
-          multi-layer CNN for MNIST handwritten digit recognition (~70% accuracy); Generalised
-          Naive Bayes with Laplace smoothing (99.2% accuracy, 0.97 F1); and multivariate
-          Linear Regression via batch Gradient Descent with feature normalisation
-          (RMSE 0.78, MSE 0.61, MAE 0.56).
-        </li>
-        <li>
-          <strong>Quantum Algorithms on Qiskit</strong> — implemented Grover's search algorithm
-          (oracle + reflection operator, above 95% hit rate across test cases); Shor's algorithm
-          on a 4-qubit circuit (successfully factoring 15 into 3 × 5 via quantum period-finding);
-          and a suite of foundational circuits including quantum teleportation,
-          Bernstein–Vazirani, Deutsch–Jozsa, a 3-qubit repetition (bit-flip) error-correction
-          code, and a quantum random number generator — all validated on IBM Quantum hardware
-          with 1024-shot simulations.
-        </li>
-      </ul>
 
-      <div class="proj-group" style="margin-top:2rem;">
-        <h3>Second Semester — Parallel Programming Projects</h3>
-        <span class="cv-section-date">Jan 2026 – May 2026</span>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>Winter Break — Independent Work</h3>
+          <span class="cv-date">Dec 2025 – Jan 2026</span>
+        </div>
+        <ul class="prose-list">
+          <li><strong>ML Algorithms from Scratch</strong> — GDA, Logistic Regression (F1 0.91–0.913), Poisson Regression via GLM (0.09% MAPE), FFNN (92% accuracy, 0.92 F1), CNN for MNIST (~70%), Naive Bayes (99.2% accuracy, 0.97 F1), Linear Regression (RMSE 0.78)</li>
+          <li><strong>Quantum Algorithms on Qiskit</strong> — Grover's search (&gt;95% hit rate), Shor's algorithm (factoring 15 on 4 qubits), teleportation, Bernstein–Vazirani, Deutsch–Jozsa, 3-qubit bit-flip error correction, QRNG — validated on IBM Quantum hardware with 1024-shot simulations</li>
+        </ul>
       </div>
-      <ul class="prose-list">
-        <li>
-          <strong>Longest Common Substring (CUDA + Thrust)</strong> — parallelised a
-          Longest Common Substring algorithm on GPU using CUDA with the Thrust library.
-          Used a double rolling hash strategy to eliminate false positives while maximising
-          parallel efficiency; achieved approximately <strong>6× speedup</strong> over the
-          CPU baseline.
-        </li>
-        <li>
-          <strong>Number of Connected Components — Shiloach–Vishkin Algorithm (Hybrid CPU-GPU)</strong> —
-          implemented the Shiloach–Vishkin parallel connectivity algorithm on GPU, using
-          the hooking and pointer-jumping steps to propagate component labels in logarithmic
-          depth. Developed a hybrid CPU-GPU version that assigns GPU threads to hooking
-          operations while the CPU handles convergence checks; achieved approximately
-          <strong>2× speedup</strong> over the CPU baseline of the same algorithm.
-        </li>
-        <li>
-          <strong>Sparse Triangular Solve — MPI One-Sided Communication (Hybrid CPU-GPU)</strong> —
-          implemented a distributed sparse triangular solver using MPI one-sided communication
-          (RMA), replacing conventional two-sided message passing to reduce synchronisation
-          overhead. Incorporated GPU acceleration for within-row element computations,
-          yielding a hybrid CPU-GPU solver. While absolute runtimes showed slowdowns relative
-          to sequential solve (expected for small problem sizes), the implementation demonstrated
-          excellent <strong>strong scaling</strong>: runtimes decreased consistently as process
-          count increased across 4 nodes with 64 processes per node, and efficiency metrics
-          confirm that one-sided communication overhead is expected to fall below two-sided
-          for larger process counts — a result validated by timing analysis across configurations.
-        </li>
-      </ul>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <h3>Second Semester — Parallel Programming Projects</h3>
+          <span class="cv-date">Jan – May 2026</span>
+        </div>
+        <ul class="prose-list">
+          <li><strong>Longest Common Substring (CUDA + Thrust)</strong> — double rolling hash strategy for parallel verification; ~6× speedup over CPU baseline</li>
+          <li><strong>Connected Components — Shiloach–Vishkin (Hybrid CPU-GPU)</strong> — GPU handles hooking and pointer-jumping; CPU manages convergence; ~2× speedup over CPU baseline of the same algorithm</li>
+          <li><strong>Sparse Triangular Solve — MPI One-Sided Communication (Hybrid CPU-GPU)</strong> — RMA-based communication with GPU acceleration for within-row elements; tested on 4 nodes, 64 processes per node; demonstrated strong scaling and one-sided efficiency gains relative to two-sided as process count increases</li>
+        </ul>
+      </div>
     </section>
 
     <hr />
@@ -421,23 +328,19 @@
       <h2>Extra-Curriculars &amp; Achievements</h2>
       <ul class="prose-list">
         <li>
-          <strong>Placement Representative, IISc Bangalore (2027 Batch)</strong> — elected
-          representative of the Department of Computational and Data Sciences for the 2027
-          graduating batch. Responsibilities include holding structured meetings with recruiting
-          companies to understand their requirements, coordinating within the placement team to
-          design and conduct written tests, and organising and managing interview logistics across
-          departments.
+          <strong>Placement Representative, IISc Bangalore (2027 batch)</strong> — elected
+          representative for the Dept. of Computational and Data Sciences; holds structured
+          meetings with recruiting companies, coordinates the placement team to design and
+          conduct written tests, and organises interview logistics.
         </li>
         <li>
-          <strong>National Swimmer</strong> — represented at the national level in competitive
-          swimming. Participated in the <strong>National School Games 2018</strong> held at
-          Ranchi. <strong>West Zone Swimming Competition</strong> — Bronze Medallist and Silver
-          Medallist across events.
+          <strong>National Swimmer</strong> — represented at the national level; participated in
+          the National School Games 2018 (Ranchi); West Zone Swimming Competition —
+          Bronze Medallist and Silver Medallist.
         </li>
         <li>
           <strong>PRMO Stage 1 (Class X)</strong> — qualified the Pre-Regional Mathematical
-          Olympiad, the entry stage of the Indian Mathematical Olympiad pipeline, demonstrating
-          strong mathematical problem-solving ability.
+          Olympiad, the first stage of the Indian Mathematical Olympiad pipeline.
         </li>
         <li>
           <strong>UIEO All India Rank 3 (Class IX)</strong> — ranked 3rd nationally in the
@@ -458,7 +361,7 @@
         &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/aadithya-iyer-51929a35b/" target="_blank" rel="noopener">LinkedIn</a>
         &nbsp;·&nbsp;
-        <a href="https://exusburn.github.io/" target="_blank" rel="noopener">Personal Website</a>
+        <a href="https://exusburn.github.io/" target="_blank" rel="noopener">exusburn.github.io</a>
       </p>
     </section>
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Interests · Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.v2.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body data-page="research">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">Research</span>
+      <h1>Research Interests</h1>
+      <p class="hero-sub">Quantum Computing · High-Performance Computing · Machine Learning · Numerical Methods · Robotics</p>
+      <p>
+        My work sits at the intersection of algorithmic theory and systems-level implementation.
+        I am interested in problems where the gap between what is theoretically possible and what
+        runs efficiently on real hardware is the central challenge — and in closing that gap through
+        careful design at every level of the stack.
+      </p>
+    </div>
+
+    <section id="quantum">
+      <h2>Quantum Algorithms &amp; Quantum Computing</h2>
+      <p>
+        My primary research interest lies in quantum computing — specifically, in algorithms that
+        offer provable advantages over classical methods for computationally hard problems. I have
+        worked with quantum linear algebra through the Krylov Quantum Diagonalization framework,
+        Hamiltonian simulation techniques including Linear Combination of Hamiltonian Simulation
+        (LCHS) and Linear Combination of Unitaries (LCU), and foundational quantum algorithms
+        including Grover's search, Shor's factoring algorithm, and quantum error correction codes.
+      </p>
+      <p>
+        I am particularly interested in the boundary between near-term NISQ devices and
+        fault-tolerant computation — what can realistically be demonstrated on today's hardware,
+        and what the path to practical quantum advantage looks like. My LCHS project involved
+        running circuits on real IBM Quantum hardware, which gave me direct experience with the
+        gap between noiseless simulation and physical device behaviour.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="hpc">
+      <h2>High-Performance Computing &amp; GPU Programming</h2>
+      <p>
+        I believe that algorithmic insight without efficient implementation is incomplete.
+        My HPC work centres on writing hand-tuned CUDA kernels for quantum statevector
+        simulation, designing distributed multi-GPU systems using CUDA-aware MPI, and
+        exploiting low-level architectural features — shared-memory tree reductions, fused
+        two-qubit gate kernels, coalesced memory access, and statevector reuse — to close the
+        gap between theoretical and hardware performance.
+      </p>
+      <p>
+        A motivating question behind my KQD project was whether hand-written CUDA could
+        decisively outperform a high-level abstraction framework (NVIDIA CUDA-Q) for the same
+        algorithm. The answer was yes — 6.2× at 23 qubits, with the gap widening as problem
+        size grows. This reinforced my conviction that for performance-critical scientific
+        computing, systems-level programming remains essential even as higher-level tools mature.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="ml">
+      <h2>Machine Learning</h2>
+      <p>
+        My ML interests span both theory and implementation. I have built core algorithms entirely
+        from scratch — Gaussian Discriminant Analysis, Logistic Regression, Poisson Regression
+        via the Generalised Linear Model framework, feedforward and convolutional neural networks,
+        Naive Bayes with Laplace smoothing, Support Vector Machines in primal and dual form, and
+        Gaussian Mixture Models via EM — and applied them to benchmark datasets including MNIST,
+        MakeMoons, Delhi air quality time series, and medical image classification.
+      </p>
+      <p>
+        I have also worked with more advanced architectures: Vision Transformers implemented
+        from scratch (multi-head self-attention, positional encoding, patch embedding), LSTMs and
+        GRUs for temporal data, and generative models including DCGANs, WGAN-GP, and Variational
+        Autoencoders. I am interested in the mathematical foundations of learning: generalisation
+        bounds, optimisation landscapes, and understanding why particular architectures and
+        training procedures work at a level deeper than empirical observation.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="numerical">
+      <h2>Numerical Methods for Differential Equations</h2>
+      <p>
+        I am interested in numerical methods for PDEs — finite difference schemes, Gaussian
+        quadrature, spectral methods, Krylov subspace iterative solvers — and in emerging
+        quantum-classical hybrid approaches to solving differential equations. The LCHS project
+        sits at this intersection: the problem is classical (1D diffusion PDE), the solution
+        method is quantum (Hamiltonian simulation as a proxy for matrix exponentiation), and
+        the validation is spectral (Fourier mode decomposition comparing quantum against classical
+        FTCS finite difference). This interplay between numerical analysis and quantum algorithms
+        is an area I want to develop further.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="robotics">
+      <h2>Robotics &amp; Computer Vision</h2>
+      <p>
+        I have worked on visual simultaneous localisation and mapping (SLAM) combined with
+        robotic manipulation, resulting in a publication at CVIP 2024. My interest in robotics
+        is shaped by the challenge of building systems that must perceive, reason, and act
+        reliably under uncertainty — where sensor noise, computational constraints, and physical
+        dynamics interact continuously. The problem of building an accurate internal model of
+        the world from imperfect observations, and using that model to act, connects deeply to
+        questions in probabilistic inference and numerical methods that run through all my work.
+      </p>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>
