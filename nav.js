@@ -31,6 +31,7 @@ const NAV = `
   <a href="iisc-sem2.html" data-id="sem2" class="nav-sub">Second Semester</a>
 
   <span class="nav-section-label">More</span>
+  <a href="cv.html" data-id="cv">CV</a>
   <a href="gate.html" data-id="gate">GATE Preparation</a>
   <a href="youtube.html" data-id="youtube">YouTube &amp; Fun</a>
 </nav>
