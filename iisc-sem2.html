@@ -16,7 +16,7 @@
     <div class="page-hero">
       <span class="hero-tag">IISc CDS · Graduate Coursework</span>
       <h1>Second Semester at IISc CDS</h1>
-      <p class="hero-sub">Department of Computational and Data Sciences &nbsp;·&nbsp; 2026 &nbsp;·&nbsp;
+      <p class="hero-sub">Department of Computational and Data Sciences &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Semester CGPA: 8.8 &nbsp;·&nbsp;
         <a href="https://github.com/ExusBurn/IIScSecondSem" target="_blank" rel="noopener">GitHub Repository →</a>
       </p>
       <p>
@@ -34,28 +34,32 @@
 
       <table class="course-table">
         <thead>
-          <tr><th>Course</th><th>Key Topics</th><th>Major Output</th></tr>
+          <tr><th>Course</th><th>Key Topics</th><th>Major Output</th><th>Grade</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>Pattern Recognition &amp; Neural Networks (PRNN)</strong></td>
             <td>Classical ML, deep learning, generative models, RL</td>
             <td><a href="ml.html">Three assignments →</a></td>
+            <td>B+</td>
           </tr>
           <tr>
             <td><strong>Parallel Programming (PP)</strong></td>
             <td>CUDA, MPI, OpenMP, distributed GPU computing</td>
             <td><a href="kqd.html">KQD final project →</a></td>
+            <td>A</td>
           </tr>
           <tr>
             <td><strong>Numerical Solutions of Differential Equations (NSDE)</strong></td>
             <td>FDM, FEM, spectral methods, quantum numerical methods</td>
             <td><a href="lchs.html">LCHS final project →</a></td>
+            <td>A+</td>
           </tr>
           <tr>
             <td><strong>Natural Language Processing (NLP)</strong></td>
             <td>Language models, sequence-to-sequence, transformers</td>
             <td>Supplementary materials</td>
+            <td>B+</td>
           </tr>
         </tbody>
       </table>
@@ -166,6 +170,94 @@
         The course provides both the theoretical grounding (information-theoretic views of
         language modelling, probabilistic sequence models) and hands-on experience fine-tuning
         pretrained models for downstream tasks.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="reflection">
+      <h2>Reflection</h2>
+
+      <h3>The semester in brief</h3>
+      <p>
+        The second semester is where the first semester pays off — and where the real cost of
+        ambition becomes visible. Almost all of my coursework this semester landed at the
+        intersection of quantum computing, which I had to learn from scratch while keeping up
+        with four demanding courses. In effect, I ran six courses' worth of work. The result
+        was a semester under considerable pressure that ended better than expected.
+      </p>
+      <p>
+        My tip for future students: this semester is about taking the mathematical foundations
+        of the first semester and building them into something real. Actually use the math in
+        your research. The courses are not isolated — they reinforce each other, and the
+        projects are where that interconnection becomes tangible.
+      </p>
+
+      <h3>Parallel Programming</h3>
+      <p>
+        The most technically demanding course in the programme — and the most fun. The learning
+        curve on CUDA is steep, the assignments expose every inefficiency in your thinking about
+        memory and parallelism, and the final project tests whether you understood the principles
+        or just the syntax. I was borderline failing at midsem. The final project — the Distributed
+        KQD implementation — ended up being the strongest in the batch. That turnaround is something
+        I'm proud of, and I'm developing it toward a publication.
+      </p>
+
+      <h3>Numerical Solutions of Differential Equations</h3>
+      <p>
+        NSDE pushed into equally novel territory. The final project — solving the heat equation
+        via the LCHS quantum algorithm in Qiskit — required reading research papers on quantum
+        simulation that had almost no overlap with the course curriculum. It was, in effect, a
+        sixth course. That kind of work is hard to manage inside a normal semester schedule,
+        but the intellectual payoff was real. NSDE and PP together pushed me further in quantum
+        computing than any formal quantum course would have.
+      </p>
+
+      <h3>Pattern Recognition &amp; Neural Networks</h3>
+      <p>
+        PRNN is the best ML course at IISc, by a significant margin. The professor approaches
+        the subject from the mathematics outward — deriving why algorithms work, not just showing
+        how to call them. Assignments are long and genuinely demanding. The exam and assignment
+        schedule can feel lazy. But sitting in class is worthwhile regardless of the grade. If
+        you're serious about understanding machine learning at a mathematical level, take PRNN.
+      </p>
+
+      <h3>Natural Language Processing</h3>
+      <p>
+        NLP is broader and more theoretical than mathematical. The exam tests recall and conceptual
+        understanding more than derivation, which wasn't what I was prepared for. Seniors often
+        recommend it for placement preparation — the coverage of language models, attention, and
+        transformers is useful context. But for depth of ML understanding, PRNN is irreplaceable.
+        NLP is a reasonable complement, not a substitute.
+      </p>
+
+      <h3>On internship preparation</h3>
+      <p>
+        January was internship season and it dominated attention for the first month of the semester.
+        I'd prepared after the first semester — projects on SMOTE for Mastercard, and basic quantum
+        algorithms for Fujitsu Research. The first Mastercard interview covered logistic regression,
+        loss functions, and SMOTE; the second asked how to handle class imbalance by adjusting
+        gradients directly, and a question on knowledge distillation from a hard-label to a
+        soft-label predictor.
+      </p>
+      <p>
+        My recommendation: get the internship, even at a cost to your GPA. The grade hit is real —
+        midsem suffered, and reading unrelated quantum papers while preparing for placements
+        compressed the entire semester. But the mental security of having placement sorted
+        early is worth more than the GPA points it costs. The stress of going without an
+        internship would have been far more damaging than the grades I gave up. Lesser grades
+        with an internship beats no internship with better grades, every time.
+      </p>
+
+      <h3>On using AI during research</h3>
+      <p>
+        Claude was genuinely useful for breaking down complex research papers and explaining
+        algorithms at the right level of abstraction. It was not useful for writing novel research
+        code — if you're implementing something with no documentation or prior examples, AI
+        will produce plausible-looking code that doesn't do what you need. The workflow that
+        actually worked: understand the algorithm yourself, write the code yourself, then use AI
+        to verify your logic and check your syntax. Treat it as a reviewer of your reasoning,
+        not a generator of it.
       </p>
     </section>
 
