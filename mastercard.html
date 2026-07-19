@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mastercard Internship &middot; Aadithya Iyer</title>
+  <link rel="stylesheet" href="styles.v2.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Page-scoped extras — kept here so styles.v2.css stays untouched */
+    .formula {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.02rem;
+      background: #fafbfd;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 0.85rem 1.2rem;
+      margin: 1.1rem 0;
+      overflow-x: auto;
+      line-height: 1.9;
+    }
+    .formula .fnote {
+      display: block;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.8rem;
+      color: var(--light);
+      margin-top: 0.4rem;
+      line-height: 1.6;
+    }
+    .num-table-wrap { overflow-x: auto; margin: 1.1rem 0; }
+    table.num-table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 460px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.86rem;
+    }
+    table.num-table th {
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding: 0.5rem 0.7rem;
+      white-space: nowrap;
+    }
+    table.num-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 0.7rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    table.num-table td.num { font-variant-numeric: tabular-nums; color: var(--muted); }
+    table.num-table tr.win td { background: var(--accent-bg); font-weight: 600; }
+    table.num-table tr.win td.num { color: var(--accent); }
+    .diagram-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fcfdfe;
+      padding: 0.5rem;
+    }
+    .diagram-wrap svg { display: block; min-width: 700px; width: 100%; height: auto; }
+    .fig-caption {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.8rem;
+      color: var(--light);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .step-label {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: var(--accent-bg);
+      border-radius: 3px;
+      padding: 0.15rem 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.4rem;
+    }
+  </style>
+</head>
+<body data-page="mastercard">
+<div class="page-wrapper">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <div class="page-hero">
+      <span class="hero-tag">Internship &middot; Recommender Systems &middot; Continual Learning</span>
+      <h1>Mastercard Internship &mdash; Sequential Recommendation in a Continual Learning Setting</h1>
+      <p class="hero-sub">Mastercard &nbsp;&middot;&nbsp; Applied ML / Recommender Systems</p>
+      <p>
+        Most of what I actually built is confidential, so this page is the <em>public-safe</em> version:
+        the problem space I worked in, the two families of models that define it, and a worked
+        numerical example that walks a real user sequence end to end. Think of it as the reading list
+        I wish someone had handed me on day one.
+      </p>
+    </div>
+
+    <div class="tech-tags">
+      <span>Sequential Recommendation</span>
+      <span>Continual Learning</span>
+      <span>Transformers</span>
+      <span>LightGCN</span>
+      <span>VAE</span>
+      <span>Knowledge Distillation</span>
+      <span>KL Divergence</span>
+      <span>KANs</span>
+      <span>PyTorch</span>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>The two papers this page is built around:</strong>
+        <a href="https://arxiv.org/abs/2506.07466" target="_blank" rel="noopener">CSTRec</a>
+        (<em>Capturing User Interests from Data Streams for Continual Sequential Recommendation</em>, WSDM 2026 &mdash;
+        <a href="https://github.com/Gyu-Seok0/CSTRec_WSDM26" target="_blank" rel="noopener">code</a>)
+        and <a href="https://arxiv.org/abs/2405.19046" target="_blank" rel="noopener">CCD</a>
+        (<em>Continual Collaborative Distillation for Recommender Systems</em>, KDD 2024).
+      </p>
+    </div>
+
+    <hr />
+
+    <section id="problem">
+      <h2>The Problem: Sequential Recommendation</h2>
+      <p>
+        Classical collaborative filtering asks a static question: <em>given the set of things this user
+        liked, what else will they like?</em> It treats your history as a bag. Order does not matter.
+        Watching <em>Memento</em> then <em>Inception</em> is the same as watching <em>Inception</em>
+        then <em>Memento</em>.
+      </p>
+      <p>
+        That is obviously wrong. Order carries enormous signal. Someone who just finished the first
+        three episodes of a series wants episode four, not a thematically similar show. Someone who
+        watched three thrillers in a row this week is in a different mood than the same person was a
+        month ago. <strong>Sequential recommendation</strong> reframes the task as next-item prediction:
+        given an ordered sequence of interactions
+        <em>s</em> = [<em>i</em><sub>1</sub>, <em>i</em><sub>2</sub>, &hellip;, <em>i</em><sub>t</sub>],
+        predict <em>i</em><sub>t+1</sub>.
+      </p>
+      <p>
+        Written that way it is a sequence-modelling problem, which is exactly what self-attention is
+        good at &mdash; hence the entire SASRec / BERT4Rec / Transformer lineage. Attention lets item
+        <em>i</em><sub>t</sub> look back across the whole history and decide for itself which earlier
+        items matter, instead of being forced through a recurrent bottleneck.
+      </p>
+
+      <h3>&hellip; in a continual learning setting</h3>
+      <p>
+        Here is where it gets hard, and where both papers live. In a lab, you have a fixed dataset:
+        train, validate, test, publish. In production the data is a <strong>stream</strong>. New users
+        sign up every second. New items are added daily. Interests drift &mdash; the user who spent
+        March on true crime spends April on cooking shows.
+      </p>
+      <p>
+        You have two bad options. <strong>Retrain from scratch</strong> on the full history every time,
+        which is correct but ruinously expensive and always stale by the time it finishes. Or
+        <strong>fine-tune on only the new data</strong>, which is cheap but causes
+        <em>catastrophic forgetting</em>: the model chases this week's behaviour and quietly discards
+        the long-term preferences that made it good. Continual learning is the study of getting the
+        cheap option to behave like the expensive one.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="architecture">
+      <h2>The Two Halves of the System</h2>
+      <p>
+        The reason I keep putting these two papers side by side is that they attack opposite halves of
+        the same problem, and the interesting engineering is in how they meet.
+      </p>
+      <p>
+        <strong>CSTRec</strong> is the <em>sequential</em> half &mdash; a Transformer that models
+        <em>your</em> trajectory through time. Its core contribution is <strong>Continual Sequential
+        Attention (CSA)</strong>, a linear attention designed for streaming data, with two components:
+        <em>Cauchy&ndash;Schwarz Normalisation</em>, which stabilises training when users interact at
+        wildly different frequencies (some watch nightly, some monthly), and <em>Collaborative Interest
+        Enrichment</em>, which fights forgetting through shared learnable interest pools rather than
+        replaying old data. That last point matters practically: it retains historical knowledge
+        <em>without direct access to prior data</em>, which is a very different privacy and storage
+        story than a replay buffer.
+      </p>
+      <p>
+        <strong>CCD</strong> is the <em>collaborative</em> half &mdash; a teacher&ndash;student system
+        where a massive teacher ensemble captures the global structure of the user&ndash;item graph and
+        distils it into a compact student small enough to actually serve. Both models evolve along the
+        stream together: the teacher teaches the student, and the student's confident predictions are
+        transferred <em>back</em> to the teacher. The collaborative backbone here is the usual
+        graph-or-autoencoder family &mdash; <strong>LightGCN</strong>-style neighbourhood propagation
+        over the bipartite interaction graph, or a <strong>VAE</strong>-style encoder&ndash;decoder over
+        the interaction vector.
+      </p>
+      <p class="fig-caption" style="margin-top:-0.4rem;">
+        A note on precision: the CCD paper's own experiments use MF- and GNN-based students with a
+        large ensemble teacher. LightGCN and VAE are the natural drop-ins for that collaborative
+        backbone slot, and that is how I am drawing it below.
+      </p>
+
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 880 600" xmlns="http://www.w3.org/2000/svg" role="img"
+             aria-label="Block diagram of the sequential Transformer branch and the collaborative LightGCN/VAE branch meeting at a knowledge distillation step.">
+          <defs>
+            <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+              <path d="M0,0 L7,3.2 L0,6.4 z" fill="#1a4a8a"/>
+            </marker>
+            <marker id="arg" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+              <path d="M0,0 L7,3.2 L0,6.4 z" fill="#888"/>
+            </marker>
+          </defs>
+          <style>
+            .bx   { fill:#f4f7fb; stroke:#c5d8f0; stroke-width:1.4; rx:7; }
+            .bxa  { fill:#eef3fb; stroke:#1a4a8a; stroke-width:1.8; rx:7; }
+            .bxg  { fill:#fafafa; stroke:#ddd; stroke-width:1.4; rx:7; }
+            .t    { font-family:Inter,system-ui,sans-serif; font-size:13px; fill:#1a1a1a; }
+            .tb   { font-family:Inter,system-ui,sans-serif; font-size:13.5px; font-weight:700; fill:#1a4a8a; }
+            .ts   { font-family:Inter,system-ui,sans-serif; font-size:11px; fill:#555; }
+            .th   { font-family:Inter,system-ui,sans-serif; font-size:11px; font-weight:700;
+                    letter-spacing:0.09em; fill:#1a4a8a; }
+            .tg   { font-family:Inter,system-ui,sans-serif; font-size:11px; fill:#888; }
+            .ln   { stroke:#1a4a8a; stroke-width:1.6; fill:none; marker-end:url(#ar); }
+            .lng  { stroke:#888; stroke-width:1.4; fill:none; stroke-dasharray:5 4; marker-end:url(#arg); }
+          </style>
+
+          <!-- data stream -->
+          <rect class="bxg" x="40" y="16" width="800" height="42"/>
+          <text class="th" x="60" y="33">DATA STREAM</text>
+          <text class="tg" x="60" y="49">block B₁ (base, 50%) → B₂ → B₃ → B₄ → B₅ → B₆  ·  temporally ordered, 10% each</text>
+          <text class="tg" x="700" y="41">time →</text>
+
+          <line class="ln" x1="240" y1="58" x2="240" y2="86"/>
+          <line class="ln" x1="640" y1="58" x2="640" y2="86"/>
+
+          <!-- column headers -->
+          <text class="th" x="70" y="80">SEQUENTIAL BRANCH — CSTRec</text>
+          <text class="th" x="470" y="80">COLLABORATIVE BRANCH — CCD</text>
+
+          <!-- LEFT COLUMN -->
+          <rect class="bx" x="60" y="92" width="360" height="48"/>
+          <text class="t"  x="76" y="113">User sequence  s = [i₁ … i_t]</text>
+          <text class="ts" x="76" y="130">Memento → Prestige → Inception → Interstellar</text>
+
+          <line class="ln" x1="240" y1="140" x2="240" y2="168"/>
+
+          <rect class="bx" x="60" y="174" width="360" height="44"/>
+          <text class="t"  x="76" y="194">Item + positional embeddings</text>
+          <text class="ts" x="76" y="210">E ∈ ℝ^{|I|×d}  ·  d = 4 in the toy example below</text>
+
+          <line class="ln" x1="240" y1="218" x2="240" y2="246"/>
+
+          <rect class="bxa" x="60" y="252" width="360" height="86"/>
+          <text class="tb" x="76" y="274">Continual Sequential Attention (CSA)</text>
+          <text class="ts" x="76" y="294">linear attention for streaming data</text>
+          <text class="ts" x="76" y="311">① Cauchy–Schwarz Normalisation — uneven user frequency</text>
+          <text class="ts" x="76" y="328">② Collaborative Interest Enrichment — shared interest pools</text>
+
+          <line class="ln" x1="240" y1="338" x2="240" y2="366"/>
+
+          <rect class="bx" x="60" y="372" width="360" height="44"/>
+          <text class="t"  x="76" y="392">Sequence representation  h ∈ ℝ^d</text>
+          <text class="ts" x="76" y="408">student logits  z^S = h · Eᵀ</text>
+
+          <!-- RIGHT COLUMN -->
+          <rect class="bx" x="460" y="92" width="360" height="48"/>
+          <text class="t"  x="476" y="113">User–item bipartite graph</text>
+          <text class="ts" x="476" y="130">who-watched-what across the entire catalogue</text>
+
+          <line class="ln" x1="640" y1="140" x2="640" y2="168"/>
+
+          <rect class="bx" x="460" y="174" width="360" height="44"/>
+          <text class="t"  x="476" y="194">LightGCN propagation  /  VAE encoder–decoder</text>
+          <text class="ts" x="476" y="210">neighbourhood smoothing  ·  no order information</text>
+
+          <line class="ln" x1="640" y1="218" x2="640" y2="246"/>
+
+          <rect class="bxa" x="460" y="252" width="360" height="86"/>
+          <text class="tb" x="476" y="274">Teacher system (large ensemble)</text>
+          <text class="ts" x="476" y="294">evolves along the stream, not trained once</text>
+          <text class="ts" x="476" y="311">① Entity Embedding Init — 1-hop / 2-hop neighbours</text>
+          <text class="ts" x="476" y="328">② Proxy-Guided Replay — stability &amp; plasticity proxies</text>
+
+          <line class="ln" x1="640" y1="338" x2="640" y2="366"/>
+
+          <rect class="bx" x="460" y="372" width="360" height="44"/>
+          <text class="t"  x="476" y="392">Teacher logits  z^T</text>
+          <text class="ts" x="476" y="408">global co-occurrence structure</text>
+
+          <!-- merge into KD -->
+          <path class="ln" d="M240,416 L240,446 L400,446 L400,470"/>
+          <path class="ln" d="M640,416 L640,446 L480,446 L480,470"/>
+
+          <rect class="bxa" x="170" y="476" width="540" height="62"/>
+          <text class="tb" x="192" y="499">Knowledge Distillation</text>
+          <text class="t"  x="192" y="521">ℒ_KD = τ² · KL( softmax(z^T/τ)  ‖  softmax(z^S/τ) )</text>
+
+          <!-- student → teacher feedback -->
+          <path class="lng" d="M710,507 L790,507 L790,394 L820,394"/>
+          <text class="tg" x="716" y="499">student → teacher transfer</text>
+
+          <line class="ln" x1="440" y1="538" x2="440" y2="562"/>
+          <rect class="bx" x="280" y="566" width="320" height="30"/>
+          <text class="t" x="300" y="586">Top-N ranking  →  next item</text>
+        </svg>
+      </div>
+      <p class="fig-caption">
+        The sequential branch knows <em>your</em> order. The collaborative branch knows
+        <em>everyone else's</em> structure. Distillation is where a compact, servable model gets to
+        hold both at once &mdash; and the dashed arrow is CCD's twist: knowledge flows back up too.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="kd">
+      <h2>Why KL Divergence Is the Right Loss for Distillation</h2>
+      <p>
+        The obvious way to train a student is on the ground-truth labels: the user watched item 62, so
+        push up item 62 and push down everything else. This is a one-hot target, and it throws away
+        almost everything the teacher knows.
+      </p>
+      <p>
+        Because look at what the teacher's output actually contains. Over four candidates it might say
+        <em>Shutter Island 50%, Tenet 30%, Dunkirk 15%, Barbie 5%</em>. The hard label only tells you
+        the argmax. The <strong>full distribution</strong> tells you that Tenet was a close second,
+        that Dunkirk was plausible-but-weaker, and that Barbie was never in the running. Hinton called
+        these the <em>dark knowledge</em> &mdash; the relative sizes of the wrong answers encode the
+        teacher's entire learned similarity structure over the catalogue. A one-hot label has zero bits
+        of that. The teacher's distribution has all of it.
+      </p>
+      <p>
+        So you want a loss that says <em>make the student's whole distribution look like the teacher's
+        whole distribution</em>. That is exactly what KL divergence measures:
+      </p>
+
+      <div class="formula">
+        D<sub>KL</sub>( q &#8214; p ) &nbsp;=&nbsp;
+        &sum;<sub>i</sub> &nbsp; q<sub>i</sub> &nbsp; log ( q<sub>i</sub> / p<sub>i</sub> )
+        <span class="fnote">
+          q = teacher distribution (the target), p = student distribution.
+          Always &ge; 0, and = 0 exactly when p = q.
+        </span>
+      </div>
+
+      <p>
+        Three properties make this the natural choice. First, it is <strong>zero if and only if the
+        distributions match</strong>, so minimising it is literally "become the teacher." Second, it is
+        <strong>asymmetric in a useful direction</strong>: the <em>q<sub>i</sub></em> out front weights
+        each term by how much the <em>teacher</em> cares. Items the teacher assigns near-zero
+        probability contribute near-nothing, so the student is not forced to waste capacity matching the
+        teacher's opinion about the 400,000 items that are all equally irrelevant. It concentrates the
+        student's effort where the teacher is confident.
+      </p>
+      <p>
+        Third, and this is the elegant part &mdash; the gradient. If you differentiate the KL through a
+        softmax with respect to the student's logits, essentially everything cancels and you are left
+        with:
+      </p>
+
+      <div class="formula">
+        &part;&thinsp;&#8466;<sub>KD</sub> / &part;&thinsp;z<sup>S</sup><sub>i</sub>
+        &nbsp;=&nbsp; p<sub>i</sub> &minus; q<sub>i</sub>
+        <span class="fnote">
+          student probability minus teacher probability. That is the entire gradient signal.
+        </span>
+      </div>
+
+      <p>
+        Which reads exactly like what you want it to read: <em>wherever the student is over-confident
+        relative to the teacher, push down by the gap; wherever it is under-confident, push up by the
+        gap.</em> No special cases, no clipping, no hand-tuned per-item weighting. The size of the
+        disagreement <em>is</em> the size of the correction.
+      </p>
+
+      <h3>The temperature knob</h3>
+      <p>
+        One practical wrinkle. A well-trained teacher is often <em>too</em> confident &mdash; it puts
+        0.98 on one item and spreads 0.02 across everything else, which is nearly one-hot again and
+        leaks almost no dark knowledge. So you divide the logits by a temperature <em>&tau;</em> &gt; 1
+        before the softmax, which flattens the distribution and makes the relative ordering of the tail
+        visible. Since this shrinks gradients by roughly 1/&tau;&sup2;, you multiply the loss back by
+        &tau;&sup2; to keep the scale sane. That is where the <em>&tau;&sup2;</em> in the diagram
+        comes from.
+      </p>
+      <div class="callout">
+        <p>
+          <strong>Worth knowing:</strong> CCD itself does not use the vanilla pointwise KL &mdash; it
+          uses a <em>list-wise</em> distillation loss, the negative log-likelihood of the teacher's
+          permutation probability over ranked items. The intuition is identical (match the teacher's
+          full opinion, not just its argmax), but the object being matched is a distribution over
+          <em>orderings</em> rather than over items. For recommendation that is arguably the more
+          honest target, because ranking is what you actually ship.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="forward">
+      <h2>A Forward Pass, With Actual Numbers</h2>
+      <p>
+        Abstractions are easy to nod along to and hard to actually believe. So here is a complete
+        worked example, small enough to check by hand. Our user has watched four Christopher Nolan
+        films, in this order:
+      </p>
+
+      <div class="formula">
+        s &nbsp;=&nbsp; [ Memento, &nbsp; The Prestige, &nbsp; Inception, &nbsp; Interstellar ]
+        <span class="fnote">Embedding dimension d = 4. Real systems use 64&ndash;256; four is enough to see the mechanics.</span>
+      </div>
+
+      <span class="step-label">Step 1 &mdash; Item embeddings</span>
+      <p>
+        Each item is a learned vector. Read the four dimensions loosely as
+        <em>[cerebral, emotional, twisty, epic-scale]</em> &mdash; in a real model nobody labels them,
+        but it helps to have a story:
+      </p>
+
+      <div class="num-table-wrap">
+        <table class="num-table">
+          <thead>
+            <tr><th>Item</th><th>ID</th><th>Embedding vector</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Memento</td><td class="num">12</td><td class="num">[0.9, 0.1, 0.8, 0.2]</td></tr>
+            <tr><td>The Prestige</td><td class="num">47</td><td class="num">[0.8, 0.2, 0.7, 0.1]</td></tr>
+            <tr><td>Inception</td><td class="num">3</td><td class="num">[0.9, 0.4, 0.6, 0.5]</td></tr>
+            <tr><td>Interstellar</td><td class="num">88</td><td class="num">[0.7, 0.6, 0.5, 0.8]</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="step-label">Step 2 &mdash; Self-attention over the sequence</span>
+      <p>
+        The query is the most recent item, Interstellar &mdash; we are asking "given where this user
+        just was, how much does each earlier film matter?" Scores are scaled dot products,
+        <em>q&middot;k / &radic;d</em> with &radic;4 = 2:
+      </p>
+
+      <div class="num-table-wrap">
+        <table class="num-table">
+          <thead>
+            <tr><th>Key item</th><th>q &middot; k</th><th>&divide; &radic;d</th><th>Attention weight</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Memento</td><td class="num">1.25</td><td class="num">0.625</td><td class="num">0.228</td></tr>
+            <tr><td>The Prestige</td><td class="num">1.11</td><td class="num">0.555</td><td class="num">0.213</td></tr>
+            <tr><td>Inception</td><td class="num">1.57</td><td class="num">0.785</td><td class="num">0.268</td></tr>
+            <tr><td>Interstellar</td><td class="num">1.74</td><td class="num">0.870</td><td class="num">0.291</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Softmax turns those into weights summing to 1. Notice they are fairly flat &mdash; this user is
+        thematically consistent, so nothing dominates, though the two most recent films get the largest
+        share. Now take the weighted sum of the value vectors to get the sequence representation:
+      </p>
+
+      <div class="formula">
+        h &nbsp;=&nbsp; 0.228&middot;e<sub>Memento</sub> + 0.213&middot;e<sub>Prestige</sub>
+        + 0.268&middot;e<sub>Inception</sub> + 0.291&middot;e<sub>Interstellar</sub>
+        <br/>
+        h &nbsp;=&nbsp; <strong>[0.820, &nbsp;0.347, &nbsp;0.638, &nbsp;0.434]</strong>
+        <span class="fnote">
+          A single vector summarising "who this user is, right now." High on cerebral and twisty,
+          moderate on epic-scale, low on emotional.
+        </span>
+      </div>
+
+      <span class="step-label">Step 3 &mdash; Scoring candidates (CSTRec / student)</span>
+      <p>
+        Score every candidate item by dot product with <em>h</em>, then softmax over the catalogue.
+        Four candidates, for legibility:
+      </p>
+
+      <div class="num-table-wrap">
+        <table class="num-table">
+          <thead>
+            <tr><th>Candidate</th><th>Embedding</th><th>Logit h&middot;e</th><th>Probability</th></tr>
+          </thead>
+          <tbody>
+            <tr class="win"><td>Tenet</td><td class="num">[0.9, 0.3, 0.7, 0.4]</td><td class="num">1.463</td><td class="num">30.5%</td></tr>
+            <tr><td>Shutter Island</td><td class="num">[0.8, 0.3, 0.8, 0.3]</td><td class="num">1.401</td><td class="num">28.7%</td></tr>
+            <tr><td>Dunkirk</td><td class="num">[0.5, 0.8, 0.3, 0.7]</td><td class="num">1.183</td><td class="num">23.1%</td></tr>
+            <tr><td>Barbie</td><td class="num">[0.1, 0.9, 0.2, 0.9]</td><td class="num">0.913</td><td class="num">17.6%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The sequential model says <strong>Tenet</strong>, narrowly, with Shutter Island two points
+        behind. This is a sensible-but-shallow answer: Tenet scores well largely because it is
+        <em>more Nolan</em>, and the embedding has learned that this user likes Nolan-shaped vectors.
+        The model is pattern-matching on style. It has no idea what people who watched these exact four
+        films actually did next.
+      </p>
+
+      <span class="step-label">Step 4 &mdash; The collaborative teacher (CCD)</span>
+      <p>
+        Meanwhile the teacher is running LightGCN propagation over the interaction graph. It does not
+        know the order of anything, but it knows something the sequential model cannot: the users who
+        watched this exact cluster overwhelmingly went on to <em>Shutter Island</em> &mdash; same
+        unreliable-narrator machinery, same DiCaprio, not actually a Nolan film at all. Style-matching
+        would never find it; co-occurrence finds it immediately.
+      </p>
+
+      <div class="num-table-wrap">
+        <table class="num-table">
+          <thead>
+            <tr><th>Candidate</th><th>Teacher logit z<sup>T</sup></th><th>Teacher prob. q</th><th>Student prob. p</th></tr>
+          </thead>
+          <tbody>
+            <tr class="win"><td>Shutter Island</td><td class="num">2.6</td><td class="num">50.0%</td><td class="num">28.7%</td></tr>
+            <tr><td>Tenet</td><td class="num">2.1</td><td class="num">30.4%</td><td class="num">30.5%</td></tr>
+            <tr><td>Dunkirk</td><td class="num">1.4</td><td class="num">15.1%</td><td class="num">23.1%</td></tr>
+            <tr><td>Barbie</td><td class="num">0.2</td><td class="num">4.5%</td><td class="num">17.6%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="step-label">Step 5 &mdash; Distillation</span>
+      <p>
+        Now compute the divergence between them, term by term:
+      </p>
+
+      <div class="formula">
+        D<sub>KL</sub>(q &#8214; p) =
+        0.304&thinsp;ln(0.304/0.306) + 0.151&thinsp;ln(0.151/0.231)
+        + 0.500&thinsp;ln(0.500/0.287) + 0.045&thinsp;ln(0.045/0.176)
+        <br/>
+        = &minus;0.002 &nbsp;&minus;&nbsp; 0.064 &nbsp;+&nbsp; 0.278 &nbsp;&minus;&nbsp; 0.062
+        &nbsp;=&nbsp; <strong>0.150 nats</strong>
+        <span class="fnote">
+          Individual terms can be negative; the total is guaranteed non-negative.
+        </span>
+      </div>
+
+      <p>
+        Look at where the mass of that loss sits. The Tenet term is &minus;0.002 &mdash; the two models
+        already agree, so no gradient. The Shutter Island term is <strong>+0.278</strong>, carrying
+        essentially the entire loss, because that is the one place the student is badly wrong in a
+        direction the teacher is confident about. Applying the gradient <em>p &minus; q</em> pushes
+        Shutter Island up hard, Barbie and Dunkirk down, and leaves Tenet alone.
+      </p>
+
+      <div class="num-table-wrap">
+        <table class="num-table">
+          <thead>
+            <tr><th>Candidate</th><th>Before KD</th><th>Gradient p&minus;q</th><th>After distillation</th></tr>
+          </thead>
+          <tbody>
+            <tr class="win"><td>Shutter Island</td><td class="num">28.7%</td><td class="num">&minus;0.213 &nbsp;(push up)</td><td class="num">39.4%</td></tr>
+            <tr><td>Tenet</td><td class="num">30.5%</td><td class="num">+0.002 &nbsp;(no change)</td><td class="num">30.4%</td></tr>
+            <tr><td>Dunkirk</td><td class="num">23.1%</td><td class="num">+0.080 &nbsp;(push down)</td><td class="num">19.1%</td></tr>
+            <tr><td>Barbie</td><td class="num">17.6%</td><td class="num">+0.131 &nbsp;(push down)</td><td class="num">11.1%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Recommendation: Shutter Island.</strong> And notice the answer <em>changed</em>. The
+          sequential model alone said Tenet. The distilled model &mdash; sequence understanding plus
+          the crowd's collaborative structure, at a size you can actually serve &mdash; says Shutter
+          Island. That flip is the whole argument for the architecture in one number.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="continual">
+      <h2>Continual Learning: What Changes When Data Is a Stream</h2>
+      <p>
+        Everything above was a single forward pass at a single moment. Continual learning is about what
+        happens to that model over the following six months.
+      </p>
+      <p>
+        The standard experimental protocol &mdash; used by both papers, on <strong>Gowalla</strong>
+        (location check-ins), <strong>ML-1M</strong> (MovieLens ratings), and <strong>Yelp</strong>
+        (business reviews) &mdash; is to sort every interaction by timestamp and cut it into blocks.
+        The first 50% becomes the <em>base block</em>, used for a full pretrain. The remaining 50% is
+        split into five <em>incremental blocks</em> of 10% each, fed to the model one at a time, as if
+        they were arriving live.
+      </p>
+      <p>
+        The strict temporal ordering is the point. You never let the model see the future, which sounds
+        obvious but is violated constantly by random train/test splits in recommender papers. And after
+        each block you evaluate on <em>both</em> axes:
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Knowledge acquisition</strong> &mdash; how well does the model predict interactions
+          in the block it just learned? Did it actually absorb the new data?
+        </li>
+        <li>
+          <strong>Knowledge retention</strong> &mdash; how well does it still predict earlier blocks?
+          Or did learning April cost it everything it knew about March?
+        </li>
+      </ul>
+      <p>
+        Naive fine-tuning wins the first and loses the second, badly. Full retraining wins both and
+        costs a fortune. Every technique in both papers &mdash; CSA's shared interest pools, CCD's
+        proxy-guided replay &mdash; exists to buy retention without buying a full retrain.
+      </p>
+
+      <h3>Why production runs on fine-tuning, not retraining</h3>
+      <p>
+        In a paper, "retrain from scratch" is a baseline row in a table. In production it is a
+        non-starter, for reasons that compound:
+      </p>
+      <ul class="prose-list">
+        <li>
+          <strong>Cost scales with total history, not new data.</strong> Each retrain re-processes
+          years of interactions to absorb one day of new ones. Fine-tuning scales with what actually
+          arrived. On a catalogue with hundreds of millions of interactions that is not a 2&times;
+          difference, it is orders of magnitude.
+        </li>
+        <li>
+          <strong>Staleness is measured in hours, and hours matter.</strong> Take Prime Video. Someone
+          starts a series tonight; the recommendation that matters is the one on tomorrow morning's
+          home row. A weekly retrain cadence means the system is reasoning about a version of you that
+          is up to seven days out of date &mdash; which, for a user mid-binge, is the difference
+          between the obviously-right recommendation and a baffling one.
+        </li>
+        <li>
+          <strong>Cold-start items have no history to retrain on.</strong> A show that premiered
+          yesterday has almost no interaction data. Waiting for the next full retrain means it sits
+          invisible during precisely the window when promotion matters most. This is why CCD's entity
+          embedding initialisation &mdash; seeding new items from their 1-hop and 2-hop graph
+          neighbours &mdash; is doing real work rather than being a footnote.
+        </li>
+        <li>
+          <strong>Interest capture is the actual product.</strong> Streaming platforms live and die on
+          how fast they detect a shift in taste. A household that just had a kid, a user who moved from
+          comedies to documentaries &mdash; the value is in noticing within days, not quarters.
+        </li>
+      </ul>
+      <p>
+        So the real question was never "fine-tune or retrain." It is: given that you are going to
+        fine-tune, how do you stop the model forgetting? That is the question both papers answer, and
+        it is the question I spent my internship inside.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="kan">
+      <h2>An Aside on KANs</h2>
+      <p>
+        <strong>Kolmogorov&ndash;Arnold Networks</strong> are a rethinking of where the learnable parts
+        of a network should live. A standard MLP puts fixed activation functions on the nodes (ReLU,
+        GELU &mdash; you pick one and it never changes) and learnable scalar weights on the edges. KANs
+        inherit their structure from the Kolmogorov&ndash;Arnold representation theorem, which says any
+        multivariate continuous function can be written as a finite composition of continuous
+        <em>univariate</em> functions and addition &mdash; and they invert the MLP arrangement
+        accordingly: the edges carry <em>learnable univariate functions</em>, typically parameterised
+        as B-splines, and the nodes do nothing but sum. So instead of learning "how much of this input
+        to pass through a fixed curve," the network learns the curve itself, per connection. The
+        practical claims are better parameter efficiency on smooth low-dimensional functions and much
+        better interpretability &mdash; you can literally plot the function on any edge and read what
+        the network learned, which for scientific problems sometimes recovers the underlying symbolic
+        formula. The costs are real too: training is slower, the spline machinery does not exploit
+        modern GPU kernels the way dense matmuls do, and the advantage over a well-tuned MLP narrows
+        considerably as dimensionality grows. Interesting rather than settled &mdash; which is exactly
+        why it is worth having in the toolkit.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="mastercard">
+      <h2>So What Did I Actually Do?</h2>
+      <p>
+        Sequential recommendation with Transformers. Continual learning over a data stream. KANs.
+      </p>
+      <p>
+        Three things on one page is not an accident. &#128521;
+      </p>
+      <p>
+        The specifics belong to Mastercard, so that is genuinely as far as I can go here. But if you
+        have read this far, you have all three pieces on the table and a reasonably good idea of what
+        happens when someone tries putting them together &mdash; and if you want to talk about it in
+        the abstract, or about the parts of it that turned out to be much harder than the papers make
+        them sound, I would enjoy that conversation.
+      </p>
+      <p>
+        Reach me at <a href="mailto:aadithyaiyer@iisc.ac.in">aadithyaiyer@iisc.ac.in</a>.
+      </p>
+    </section>
+
+  </main>
+</div>
+<script src="nav.js"></script>
+</body>
+</html>

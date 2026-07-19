@@ -21,6 +21,9 @@ const NAV = `
   <a href="index.html" data-id="about">About Me</a>
   <a href="research.html" data-id="research">Research Interests</a>
 
+  <span class="nav-section-label">Experience</span>
+  <a href="mastercard.html" data-id="mastercard" class="nav-sub">Mastercard Internship</a>
+
   <span class="nav-section-label">Research &amp; Projects</span>
   <a href="kqd.html" data-id="kqd" class="nav-sub">Krylov Quantum Diagonalization</a>
   <a href="lchs.html" data-id="lchs" class="nav-sub">Quantum Heat Equation (LCHS)</a>
