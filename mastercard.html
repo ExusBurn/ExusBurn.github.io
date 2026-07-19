@@ -176,8 +176,11 @@
     <section id="architecture">
       <h2>The Two Halves of the System</h2>
       <p>
-        The reason I keep putting these two papers side by side is that they attack opposite halves of
-        the same problem, and the interesting engineering is in how they meet.
+        These two papers are worth reading together because they attack the same problem &mdash;
+        recommendation over a data stream that never stops moving &mdash; from opposite directions.
+        They are <em>not</em> two halves of one pipeline. Each is a complete, standalone method.
+        What makes the pairing instructive is that the signal each one captures is precisely the
+        signal the other cannot see.
       </p>
       <p>
         <strong>CSTRec</strong> is the <em>sequential</em> half &mdash; a Transformer that models
@@ -188,17 +191,20 @@
         Enrichment</em>, which fights forgetting through shared learnable interest pools rather than
         replaying old data. That last point matters practically: it retains historical knowledge
         <em>without direct access to prior data</em>, which is a very different privacy and storage
-        story than a replay buffer.
+        story than a replay buffer. Note what is <strong>absent</strong>: CSTRec involves no teacher,
+        no student, and no distillation of any kind. It is one Transformer, trained continually, that
+        emits a ranking.
       </p>
       <p>
-        <strong>CCD</strong> is the <em>collaborative</em> half &mdash; a teacher&ndash;student system
-        where a massive teacher ensemble captures the global structure of the user&ndash;item graph and
-        distils it into a compact student small enough to actually serve. Both models evolve along the
-        stream together: the teacher teaches the student, and the student's confident predictions are
-        transferred <em>back</em> to the teacher. The collaborative backbone here is the usual
-        graph-or-autoencoder family &mdash; <strong>LightGCN</strong>-style neighbourhood propagation
-        over the bipartite interaction graph, or a <strong>VAE</strong>-style encoder&ndash;decoder over
-        the interaction vector.
+        <strong>CCD</strong> is the <em>collaborative</em> method, and this is where distillation
+        actually lives. It is a teacher&ndash;student system: a massive teacher ensemble captures the
+        global structure of the user&ndash;item graph, and that structure is distilled into a compact
+        student small enough to actually serve. The distillation is <strong>entirely internal to
+        CCD</strong> &mdash; teacher to student, both inside the same method. Both models then evolve
+        along the stream together, with the student's confident predictions transferred <em>back</em>
+        to the teacher. The collaborative backbone is the usual graph-or-autoencoder family:
+        <strong>LightGCN</strong>-style neighbourhood propagation over the bipartite interaction
+        graph, or a <strong>VAE</strong>-style encoder&ndash;decoder over the interaction vector.
       </p>
       <p class="fig-caption" style="margin-top:-0.4rem;">
         A note on precision: the CCD paper's own experiments use MF- and GNN-based students with a
@@ -207,114 +213,124 @@
       </p>
 
       <div class="diagram-wrap">
-        <svg viewBox="0 0 880 600" xmlns="http://www.w3.org/2000/svg" role="img"
-             aria-label="Block diagram of the sequential Transformer branch and the collaborative LightGCN/VAE branch meeting at a knowledge distillation step.">
+        <svg viewBox="0 0 920 690" xmlns="http://www.w3.org/2000/svg" role="img"
+             aria-label="Two parallel continual-learning pipelines. Left: CSTRec, a sequential Transformer producing a next-item prediction with no distillation. Right: CCD, a collaborative teacher distilled into a compact student.">
           <defs>
-            <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
-              <path d="M0,0 L7,3.2 L0,6.4 z" fill="#1a4a8a"/>
+            <marker id="ar" markerWidth="10" markerHeight="10" refX="7.5" refY="3.5" orient="auto">
+              <path d="M0,0 L7.5,3.5 L0,7 z" fill="#1a4a8a"/>
             </marker>
-            <marker id="arg" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
-              <path d="M0,0 L7,3.2 L0,6.4 z" fill="#888"/>
+            <marker id="arg" markerWidth="10" markerHeight="10" refX="7.5" refY="3.5" orient="auto">
+              <path d="M0,0 L7.5,3.5 L0,7 z" fill="#8a94a3"/>
             </marker>
           </defs>
           <style>
-            .bx   { fill:#f4f7fb; stroke:#c5d8f0; stroke-width:1.4; rx:7; }
-            .bxa  { fill:#eef3fb; stroke:#1a4a8a; stroke-width:1.8; rx:7; }
-            .bxg  { fill:#fafafa; stroke:#ddd; stroke-width:1.4; rx:7; }
-            .t    { font-family:Inter,system-ui,sans-serif; font-size:13px; fill:#1a1a1a; }
-            .tb   { font-family:Inter,system-ui,sans-serif; font-size:13.5px; font-weight:700; fill:#1a4a8a; }
-            .ts   { font-family:Inter,system-ui,sans-serif; font-size:11px; fill:#555; }
-            .th   { font-family:Inter,system-ui,sans-serif; font-size:11px; font-weight:700;
-                    letter-spacing:0.09em; fill:#1a4a8a; }
-            .tg   { font-family:Inter,system-ui,sans-serif; font-size:11px; fill:#888; }
-            .ln   { stroke:#1a4a8a; stroke-width:1.6; fill:none; marker-end:url(#ar); }
-            .lng  { stroke:#888; stroke-width:1.4; fill:none; stroke-dasharray:5 4; marker-end:url(#arg); }
+            .bx  { fill:#f4f7fb; stroke:#c5d8f0; stroke-width:1.4; rx:7; }
+            .bxa { fill:#e8eff9; stroke:#1a4a8a; stroke-width:1.9; rx:7; }
+            .bxo { fill:#fff; stroke:#1a4a8a; stroke-width:1.6; rx:7; stroke-dasharray:0; }
+            .bxg { fill:#fafafa; stroke:#ddd; stroke-width:1.4; rx:7; }
+            .t   { font-family:Inter,system-ui,sans-serif; font-size:13px; fill:#1a1a1a; }
+            .tb  { font-family:Inter,system-ui,sans-serif; font-size:13.5px; font-weight:700; fill:#1a4a8a; }
+            .ts  { font-family:Inter,system-ui,sans-serif; font-size:11px; fill:#555; }
+            .th  { font-family:Inter,system-ui,sans-serif; font-size:11.5px; font-weight:700;
+                   letter-spacing:0.085em; fill:#1a4a8a; }
+            .tg  { font-family:Inter,system-ui,sans-serif; font-size:10.5px; fill:#8a94a3; }
+            .ln  { stroke:#1a4a8a; stroke-width:1.7; fill:none; marker-end:url(#ar); }
+            .lng { stroke:#8a94a3; stroke-width:1.4; fill:none; stroke-dasharray:5 4; marker-end:url(#arg); }
           </style>
 
-          <!-- data stream -->
-          <rect class="bxg" x="40" y="16" width="800" height="42"/>
-          <text class="th" x="60" y="33">DATA STREAM</text>
-          <text class="tg" x="60" y="49">block B₁ (base, 50%) → B₂ → B₃ → B₄ → B₅ → B₆  ·  temporally ordered, 10% each</text>
-          <text class="tg" x="700" y="41">time →</text>
-
-          <line class="ln" x1="240" y1="58" x2="240" y2="86"/>
-          <line class="ln" x1="640" y1="58" x2="640" y2="86"/>
+          <!-- shared data stream -->
+          <rect class="bxg" x="60" y="14" width="780" height="46"/>
+          <text class="th" x="78" y="33">SHARED DATA STREAM</text>
+          <text class="tg" x="78" y="50">B₁ (base, 50%) → B₂ → B₃ → B₄ → B₅ → B₆   ·   temporally ordered, 10% each</text>
+          <text class="tg" x="762" y="41">time →</text>
 
           <!-- column headers -->
-          <text class="th" x="70" y="80">SEQUENTIAL BRANCH — CSTRec</text>
-          <text class="th" x="470" y="80">COLLABORATIVE BRANCH — CCD</text>
+          <text class="th" x="60"  y="88">SEQUENTIAL — CSTRec</text>
+          <text class="tg" x="235" y="88">no distillation</text>
+          <text class="th" x="470" y="88">COLLABORATIVE — CCD</text>
+          <text class="tg" x="660" y="88">teacher → student</text>
 
-          <!-- LEFT COLUMN -->
-          <rect class="bx" x="60" y="92" width="360" height="48"/>
-          <text class="t"  x="76" y="113">User sequence  s = [i₁ … i_t]</text>
-          <text class="ts" x="76" y="130">Memento → Prestige → Inception → Interstellar</text>
+          <line class="ln" x1="245" y1="98" x2="245" y2="126"/>
+          <line class="ln" x1="655" y1="98" x2="655" y2="126"/>
 
-          <line class="ln" x1="240" y1="140" x2="240" y2="168"/>
+          <!-- ── row 1 ── -->
+          <rect class="bx" x="60" y="132" width="370" height="58"/>
+          <text class="t"  x="78" y="154">User sequence  s = [i₁ … i_t]</text>
+          <text class="ts" x="78" y="174">Memento → The Prestige → Inception → Interstellar</text>
 
-          <rect class="bx" x="60" y="174" width="360" height="44"/>
-          <text class="t"  x="76" y="194">Item + positional embeddings</text>
-          <text class="ts" x="76" y="210">E ∈ ℝ^{|I|×d}  ·  d = 4 in the toy example below</text>
+          <rect class="bx" x="470" y="132" width="370" height="58"/>
+          <text class="t"  x="488" y="154">User–item bipartite graph</text>
+          <text class="ts" x="488" y="174">who-watched-what across the whole catalogue</text>
 
-          <line class="ln" x1="240" y1="218" x2="240" y2="246"/>
+          <line class="ln" x1="245" y1="190" x2="245" y2="218"/>
+          <line class="ln" x1="655" y1="190" x2="655" y2="218"/>
 
-          <rect class="bxa" x="60" y="252" width="360" height="86"/>
-          <text class="tb" x="76" y="274">Continual Sequential Attention (CSA)</text>
-          <text class="ts" x="76" y="294">linear attention for streaming data</text>
-          <text class="ts" x="76" y="311">① Cauchy–Schwarz Normalisation — uneven user frequency</text>
-          <text class="ts" x="76" y="328">② Collaborative Interest Enrichment — shared interest pools</text>
+          <!-- ── row 2 ── -->
+          <rect class="bx" x="60" y="224" width="370" height="54"/>
+          <text class="t"  x="78" y="245">Item + positional embeddings</text>
+          <text class="ts" x="78" y="264">E ∈ ℝ^(|I|×d)   ·   d = 4 in the worked example</text>
 
-          <line class="ln" x1="240" y1="338" x2="240" y2="366"/>
+          <rect class="bx" x="470" y="224" width="370" height="54"/>
+          <text class="t"  x="488" y="245">LightGCN propagation  /  VAE encoder–decoder</text>
+          <text class="ts" x="488" y="264">neighbourhood smoothing   ·   order is ignored</text>
 
-          <rect class="bx" x="60" y="372" width="360" height="44"/>
-          <text class="t"  x="76" y="392">Sequence representation  h ∈ ℝ^d</text>
-          <text class="ts" x="76" y="408">student logits  z^S = h · Eᵀ</text>
+          <line class="ln" x1="245" y1="278" x2="245" y2="306"/>
+          <line class="ln" x1="655" y1="278" x2="655" y2="306"/>
 
-          <!-- RIGHT COLUMN -->
-          <rect class="bx" x="460" y="92" width="360" height="48"/>
-          <text class="t"  x="476" y="113">User–item bipartite graph</text>
-          <text class="ts" x="476" y="130">who-watched-what across the entire catalogue</text>
+          <!-- ── row 3 ── -->
+          <rect class="bxa" x="60" y="312" width="370" height="94"/>
+          <text class="tb" x="78" y="334">Continual Sequential Attention (CSA)</text>
+          <text class="ts" x="78" y="354">linear attention designed for streaming data</text>
+          <text class="ts" x="78" y="374">① Cauchy–Schwarz Normalisation — uneven user frequency</text>
+          <text class="ts" x="78" y="394">② Collaborative Interest Enrichment — shared interest pools</text>
 
-          <line class="ln" x1="640" y1="140" x2="640" y2="168"/>
+          <rect class="bxa" x="470" y="312" width="370" height="94"/>
+          <text class="tb" x="488" y="334">Teacher — large ensemble</text>
+          <text class="ts" x="488" y="354">evolves along the stream, not trained once</text>
+          <text class="ts" x="488" y="374">① Entity Embedding Init — 1-hop / 2-hop neighbours</text>
+          <text class="ts" x="488" y="394">② Proxy-Guided Replay — stability &amp; plasticity proxies</text>
 
-          <rect class="bx" x="460" y="174" width="360" height="44"/>
-          <text class="t"  x="476" y="194">LightGCN propagation  /  VAE encoder–decoder</text>
-          <text class="ts" x="476" y="210">neighbourhood smoothing  ·  no order information</text>
+          <line class="ln" x1="245" y1="406" x2="245" y2="434"/>
+          <line class="ln" x1="655" y1="406" x2="655" y2="434"/>
 
-          <line class="ln" x1="640" y1="218" x2="640" y2="246"/>
+          <!-- ── row 4 ── -->
+          <rect class="bx" x="60" y="440" width="370" height="80"/>
+          <text class="t"  x="78" y="462">Sequence representation  h ∈ ℝ^d</text>
+          <text class="ts" x="78" y="482">scores  z = h · Eᵀ,  then softmax over the catalogue</text>
+          <text class="ts" x="78" y="503">the branch ends here — nothing is distilled</text>
 
-          <rect class="bxa" x="460" y="252" width="360" height="86"/>
-          <text class="tb" x="476" y="274">Teacher system (large ensemble)</text>
-          <text class="ts" x="476" y="294">evolves along the stream, not trained once</text>
-          <text class="ts" x="476" y="311">① Entity Embedding Init — 1-hop / 2-hop neighbours</text>
-          <text class="ts" x="476" y="328">② Proxy-Guided Replay — stability &amp; plasticity proxies</text>
+          <rect class="bxa" x="470" y="440" width="370" height="80"/>
+          <text class="tb" x="488" y="462">Knowledge Distillation — internal to CCD</text>
+          <text class="t"  x="488" y="484">ℒ_KD = KL( softmax(z^T/τ) ‖ softmax(z^S/τ) )</text>
+          <text class="ts" x="488" y="504">list-wise permutation loss in the paper</text>
 
-          <line class="ln" x1="640" y1="338" x2="640" y2="366"/>
+          <line class="ln" x1="245" y1="520" x2="245" y2="548"/>
+          <line class="ln" x1="655" y1="520" x2="655" y2="548"/>
 
-          <rect class="bx" x="460" y="372" width="360" height="44"/>
-          <text class="t"  x="476" y="392">Teacher logits  z^T</text>
-          <text class="ts" x="476" y="408">global co-occurrence structure</text>
+          <!-- ── row 5 ── -->
+          <rect class="bxo" x="60" y="554" width="370" height="54"/>
+          <text class="t"  x="78" y="576">Sequential next-item prediction</text>
+          <text class="ts" x="78" y="595">ranked by the user's own trajectory</text>
 
-          <!-- merge into KD -->
-          <path class="ln" d="M240,416 L240,446 L400,446 L400,470"/>
-          <path class="ln" d="M640,416 L640,446 L480,446 L480,470"/>
+          <rect class="bxo" x="470" y="554" width="370" height="54"/>
+          <text class="t"  x="488" y="576">Compact student — servable</text>
+          <text class="ts" x="488" y="595">carries the teacher's structure at deployable size</text>
 
-          <rect class="bxa" x="170" y="476" width="540" height="62"/>
-          <text class="tb" x="192" y="499">Knowledge Distillation</text>
-          <text class="t"  x="192" y="521">ℒ_KD = τ² · KL( softmax(z^T/τ)  ‖  softmax(z^S/τ) )</text>
+          <!-- student → teacher feedback, internal to CCD -->
+          <path class="lng" d="M840,581 L872,581 L872,359 L840,359"/>
+          <text class="tg" transform="rotate(-90 892 470)" x="892" y="470"
+                text-anchor="middle">student → teacher transfer</text>
 
-          <!-- student → teacher feedback -->
-          <path class="lng" d="M710,507 L790,507 L790,394 L820,394"/>
-          <text class="tg" x="716" y="499">student → teacher transfer</text>
-
-          <line class="ln" x1="440" y1="538" x2="440" y2="562"/>
-          <rect class="bx" x="280" y="566" width="320" height="30"/>
-          <text class="t" x="300" y="586">Top-N ranking  →  next item</text>
+          <text class="tg" x="60" y="644">Both methods learn continually over the same stream. CSTRec models one user's order;</text>
+          <text class="tg" x="60" y="662">CCD models global co-occurrence and compresses it into a student small enough to deploy.</text>
         </svg>
       </div>
       <p class="fig-caption">
-        The sequential branch knows <em>your</em> order. The collaborative branch knows
-        <em>everyone else's</em> structure. Distillation is where a compact, servable model gets to
-        hold both at once &mdash; and the dashed arrow is CCD's twist: knowledge flows back up too.
+        Two independent pipelines over one stream. CSTRec (left) knows <em>your</em> order and ends
+        at a ranking &mdash; there is no distillation in that column at all. CCD (right) knows
+        <em>everyone else's</em> co-occurrence structure, and its distillation step is internal:
+        teacher into student, so that what the ensemble learned can be served at deployable size.
+        The dashed arrow is CCD's twist &mdash; knowledge flows back up from student to teacher too.
       </p>
     </section>
 
@@ -322,6 +338,10 @@
 
     <section id="kd">
       <h2>Why KL Divergence Is the Right Loss for Distillation</h2>
+      <p>
+        Everything in this section describes what happens <em>inside CCD</em>, between its teacher and
+        its student. CSTRec plays no part here.
+      </p>
       <p>
         The obvious way to train a student is on the ground-truth labels: the user watched item 62, so
         push up item 62 and push down everything else. This is a one-hot target, and it throws away
@@ -504,19 +524,20 @@
         films actually did next.
       </p>
 
-      <span class="step-label">Step 4 &mdash; The collaborative teacher (CCD)</span>
+      <span class="step-label">Step 4 &mdash; The collaborative model (CCD)</span>
       <p>
-        Meanwhile the teacher is running LightGCN propagation over the interaction graph. It does not
-        know the order of anything, but it knows something the sequential model cannot: the users who
-        watched this exact cluster overwhelmingly went on to <em>Shutter Island</em> &mdash; same
-        unreliable-narrator machinery, same DiCaprio, not actually a Nolan film at all. Style-matching
-        would never find it; co-occurrence finds it immediately.
+        Now hand the same user to CCD, which knows nothing about order. Its teacher runs LightGCN
+        propagation over the interaction graph and sees something the sequential model structurally
+        cannot: the users who watched this exact cluster overwhelmingly went on to
+        <em>Shutter Island</em> &mdash; same unreliable-narrator machinery, same DiCaprio, and not a
+        Nolan film at all. Style-matching would never surface it. Co-occurrence surfaces it
+        immediately.
       </p>
 
       <div class="num-table-wrap">
         <table class="num-table">
           <thead>
-            <tr><th>Candidate</th><th>Teacher logit z<sup>T</sup></th><th>Teacher prob. q</th><th>Student prob. p</th></tr>
+            <tr><th>Candidate</th><th>CCD teacher logit z<sup>T</sup></th><th>CCD teacher q</th><th>CCD student p (pre-KD)</th></tr>
           </thead>
           <tbody>
             <tr class="win"><td>Shutter Island</td><td class="num">2.6</td><td class="num">50.0%</td><td class="num">28.7%</td></tr>
@@ -527,9 +548,20 @@
         </table>
       </div>
 
-      <span class="step-label">Step 5 &mdash; Distillation</span>
+      <div class="callout">
+        <p>
+          <strong>Read that last column carefully.</strong> It is CCD's <em>own</em> compact student
+          before distillation &mdash; not the CSTRec output from Step 3. The distillation about to
+          happen is internal to CCD: its teacher teaching its student. CSTRec is a separate model
+          that produced a separate answer, and nothing is being distilled from it. The two
+          distributions happen to be close, which is convenient for the illustration but is not a
+          claim that they are the same object.
+        </p>
+      </div>
+
+      <span class="step-label">Step 5 &mdash; Distillation, inside CCD</span>
       <p>
-        Now compute the divergence between them, term by term:
+        Compute the divergence between CCD's teacher and CCD's student, term by term:
       </p>
 
       <div class="formula">
@@ -545,17 +577,18 @@
       </div>
 
       <p>
-        Look at where the mass of that loss sits. The Tenet term is &minus;0.002 &mdash; the two models
-        already agree, so no gradient. The Shutter Island term is <strong>+0.278</strong>, carrying
-        essentially the entire loss, because that is the one place the student is badly wrong in a
-        direction the teacher is confident about. Applying the gradient <em>p &minus; q</em> pushes
-        Shutter Island up hard, Barbie and Dunkirk down, and leaves Tenet alone.
+        Look at where the mass of that loss sits. The Tenet term is &minus;0.002 &mdash; teacher and
+        student already agree, so no gradient. The Shutter Island term is <strong>+0.278</strong>,
+        carrying essentially the entire loss, because that is the one place the student is badly
+        wrong in a direction the teacher is confident about. Applying the gradient
+        <em>p &minus; q</em> pushes Shutter Island up hard, Barbie and Dunkirk down, and leaves
+        Tenet alone.
       </p>
 
       <div class="num-table-wrap">
         <table class="num-table">
           <thead>
-            <tr><th>Candidate</th><th>Before KD</th><th>Gradient p&minus;q</th><th>After distillation</th></tr>
+            <tr><th>Candidate</th><th>Student before KD</th><th>Gradient p&minus;q</th><th>Student after KD</th></tr>
           </thead>
           <tbody>
             <tr class="win"><td>Shutter Island</td><td class="num">28.7%</td><td class="num">&minus;0.213 &nbsp;(push up)</td><td class="num">39.4%</td></tr>
@@ -566,12 +599,31 @@
         </table>
       </div>
 
+      <span class="step-label">Step 6 &mdash; The two answers, side by side</span>
+      <p>
+        Both models have now spoken, independently, about the same user:
+      </p>
+
+      <div class="num-table-wrap">
+        <table class="num-table">
+          <thead>
+            <tr><th>Model</th><th>Top pick</th><th>Confidence</th><th>What it is reasoning from</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CSTRec (sequential)</td><td>Tenet</td><td class="num">30.5%</td><td>this user&#39;s own trajectory</td></tr>
+            <tr class="win"><td>CCD (collaborative, distilled)</td><td>Shutter Island</td><td class="num">39.4%</td><td>what similar users actually did next</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="callout">
         <p>
-          <strong>Recommendation: Shutter Island.</strong> And notice the answer <em>changed</em>. The
-          sequential model alone said Tenet. The distilled model &mdash; sequence understanding plus
-          the crowd's collaborative structure, at a size you can actually serve &mdash; says Shutter
-          Island. That flip is the whole argument for the architecture in one number.
+          <strong>And they disagree &mdash; which is the entire point.</strong> CSTRec says Tenet
+          because Tenet is <em>more Nolan</em>, and this user&#39;s trajectory is Nolan-shaped. CCD says
+          Shutter Island because people who watched precisely these four films went there next, a
+          fact no amount of style-matching will recover. Neither is wrong. They are answering from
+          different evidence, and a production system wants both signals available rather than one
+          of them thrown away.
         </p>
       </div>
     </section>
