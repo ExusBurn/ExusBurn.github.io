@@ -268,7 +268,7 @@
           <!-- ── row 2 ── -->
           <rect class="bx" x="60" y="224" width="370" height="54"/>
           <text class="t"  x="78" y="245">Item + positional embeddings</text>
-          <text class="ts" x="78" y="264">E ∈ ℝ^(|I|×d)   ·   d = 4 in the worked example</text>
+          <text class="ts" x="78" y="264">E : |I| × d embedding matrix   ·   d = 4 in the worked example</text>
 
           <rect class="bx" x="470" y="224" width="370" height="54"/>
           <text class="t"  x="488" y="245">LightGCN propagation  /  VAE encoder–decoder</text>
@@ -295,14 +295,14 @@
 
           <!-- ── row 4 ── -->
           <rect class="bx" x="60" y="440" width="370" height="80"/>
-          <text class="t"  x="78" y="462">Sequence representation  h ∈ ℝ^d</text>
+          <text class="t"  x="78" y="462">Sequence representation  h</text>
           <text class="ts" x="78" y="482">scores  z = h · Eᵀ,  then softmax over the catalogue</text>
           <text class="ts" x="78" y="503">the branch ends here — nothing is distilled</text>
 
           <rect class="bxa" x="470" y="440" width="370" height="80"/>
           <text class="tb" x="488" y="462">Knowledge Distillation — internal to CCD</text>
-          <text class="t"  x="488" y="484">ℒ_KD = KL( softmax(z^T/τ) ‖ softmax(z^S/τ) )</text>
-          <text class="ts" x="488" y="504">list-wise permutation loss in the paper</text>
+          <text class="t"  x="488" y="484">KD loss  =  KL( teacher ‖ student )</text>
+          <text class="ts" x="488" y="504">softmax at temperature τ   ·   list-wise permutation loss in the paper</text>
 
           <line class="ln" x1="245" y1="520" x2="245" y2="548"/>
           <line class="ln" x1="655" y1="520" x2="655" y2="548"/>
